@@ -16,8 +16,10 @@ public class BuffetTable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int buffetTableId;
+
     @Column(nullable = false, unique = true)
     private String buffetTableName;
+
     @ManyToOne()
     @JoinColumn(name = "table_group_id", nullable = false)
     private TableGroup tableGroup;

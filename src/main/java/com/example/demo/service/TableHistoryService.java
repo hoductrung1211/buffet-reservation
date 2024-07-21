@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class TableHistoryService {
-    private ITableHistoryRepository tableHistoryRepository;
+    private final ITableHistoryRepository tableHistoryRepository;
 
     @Autowired
     public TableHistoryService(ITableHistoryRepository tableHistoryRepository) {

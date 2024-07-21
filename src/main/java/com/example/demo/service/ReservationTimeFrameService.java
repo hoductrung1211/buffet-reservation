@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ReservationTimeFrameService {
-    private IReservationTimeFrameRepository reservationTimeFrameRepository;
+    private final IReservationTimeFrameRepository reservationTimeFrameRepository;
 
     @Autowired
     public ReservationTimeFrameService(IReservationTimeFrameRepository reservationTimeFrameRepository) {

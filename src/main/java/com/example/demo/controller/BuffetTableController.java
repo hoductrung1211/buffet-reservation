@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/buffet-tables")
 public class BuffetTableController {
-    private BuffetTableService buffetTableService;
+    private final BuffetTableService buffetTableService;
 
     @Autowired
     public BuffetTableController(BuffetTableService buffetTableService) {

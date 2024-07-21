@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class DayGroupService {
-    private IDayGroupRepository dayGroupRepository;
+    private final IDayGroupRepository dayGroupRepository;
 
     @Autowired
     public DayGroupService(IDayGroupRepository dayGroupRepository) {

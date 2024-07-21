@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MenuItemCategoryService {
-    private IMenuItemCategoryRepository menuItemCategoryRepository;
+    private final IMenuItemCategoryRepository menuItemCategoryRepository;
 
     @Autowired
     public MenuItemCategoryService(IMenuItemCategoryRepository menuItemCategoryRepository) {
