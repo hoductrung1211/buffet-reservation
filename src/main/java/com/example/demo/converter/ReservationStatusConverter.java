@@ -1,6 +1,5 @@
 package com.example.demo.converter;
 
-import com.example.demo.model.auth.Role;
 import com.example.demo.model.reservation.ReservationStatus;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;

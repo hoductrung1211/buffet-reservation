@@ -1,6 +1,5 @@
 package com.example.demo.model.table;
 
-import jakarta.persistence.Table;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,11 +19,18 @@ public class TableGroup {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int tableGroupId;
     @Column(nullable = false)
-    private int tableGroupName;
+    private String tableGroupName;
     @Column(nullable = false)
     private int minPeopleQuantity;
     @Column(nullable = false)
     private int maxPeopleQuantity;
+
+    public TableGroup(int tableGroupId, String tableGroupName, int minPeopleQuantity, int maxPeopleQuantity) {
+        this.tableGroupId = tableGroupId;
+        this.tableGroupName = tableGroupName;
+        this.minPeopleQuantity = minPeopleQuantity;
+        this.maxPeopleQuantity = maxPeopleQuantity;
+    }
 
     @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BuffetTable> buffetTables;

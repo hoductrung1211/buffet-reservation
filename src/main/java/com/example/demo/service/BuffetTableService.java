@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class BuffetTableService {
-    private IBuffetTableRepository buffetTableRepository;
+    private final IBuffetTableRepository buffetTableRepository;
 
     @Autowired
     public BuffetTableService(IBuffetTableRepository buffetTableRepository) {

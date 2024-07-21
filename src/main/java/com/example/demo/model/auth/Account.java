@@ -32,4 +32,11 @@ public class Account {
 
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
     private Customer customer;
+
+    public Account(int accountId, String password, Role role, boolean isActive) {
+        this.accountId = accountId;
+        this.password = password;
+        this.role = role;
+        this.isActive = isActive;
+    }
 }

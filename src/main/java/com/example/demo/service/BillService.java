@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class BillService {
-    private IBillRepository billRepository;
+    private final IBillRepository billRepository;
 
     @Autowired
     public BillService(IBillRepository billRepository) {

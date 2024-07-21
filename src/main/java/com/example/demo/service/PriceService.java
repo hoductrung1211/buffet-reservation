@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PriceService {
-    private IPriceRepository priceRepository;
+    private final IPriceRepository priceRepository;
 
     @Autowired
     public PriceService(IPriceRepository priceRepository) {

@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
 import java.math.BigDecimal;
 
@@ -36,7 +35,6 @@ public class MenuItem {
 
     private String imageUrl;
 
-    @Column(nullable = false)
     private BigDecimal price;
 
     private boolean isActive = true;
