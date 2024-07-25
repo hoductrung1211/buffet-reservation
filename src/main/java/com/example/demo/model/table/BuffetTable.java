@@ -1,5 +1,6 @@
 package com.example.demo.model.table;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,5 +23,6 @@ public class BuffetTable {
 
     @ManyToOne()
     @JoinColumn(name = "table_group_id", nullable = false)
+    @JsonManagedReference
     private TableGroup tableGroup;
 }

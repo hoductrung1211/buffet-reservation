@@ -1,5 +1,6 @@
 package com.example.demo.model.price;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,6 +22,7 @@ public class DayGroupApplication {
 
     @ManyToOne()
     @JoinColumn(name = "day_group_id")
+    @JsonBackReference
     private DayGroup dayGroup;
 
     @Column(nullable = false)

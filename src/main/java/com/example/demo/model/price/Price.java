@@ -1,5 +1,6 @@
 package com.example.demo.model.price;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,6 +22,7 @@ public class Price {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "day_group_id", nullable = false)
+    @JsonBackReference
     private DayGroup dayGroup;
 
     @Column(nullable = false)
@@ -28,4 +30,11 @@ public class Price {
 
     @Column(nullable = false)
     private BigDecimal childPrice;
+
+    // Constructor với tham số
+    public Price(DayGroup dayGroup, BigDecimal adultPrice, BigDecimal childPrice) {
+        this.dayGroup = dayGroup;
+        this.adultPrice = adultPrice;
+        this.childPrice = childPrice;
+    }
 }

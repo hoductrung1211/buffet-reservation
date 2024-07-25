@@ -9,6 +9,7 @@ import com.example.demo.model.menu.MenuItemCategory;
 import com.example.demo.model.menu.MenuItemGroup;
 import com.example.demo.model.price.DayGroup;
 import com.example.demo.model.price.DayGroupApplication;
+import com.example.demo.model.price.Price;
 import com.example.demo.model.table.BuffetTable;
 import com.example.demo.model.table.TableGroup;
 import com.example.demo.repository.*;
@@ -18,6 +19,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -250,32 +252,46 @@ public class SeedDataService implements ApplicationRunner {
         }
     }
 
-    /* Price */
+    /*Prices*/
     public void seedPrices() {
-        var dayGroups = Arrays.asList(
-                new DayGroup(1, "Ngày thường", true),
-                new DayGroup(2, "Ngày cuối tuần", true),
-                new DayGroup(3, "Ngày lễ", true)
-        );
+        // Lấy tất cả DayGroup từ cơ sở dữ liệu
+        var dayGroups = dayGroupRepository.findAll();
 
-        if (dayGroupRepository.count() == 0) {
-            dayGroupRepository.saveAll(dayGroups);
+        if (dayGroups.isEmpty()) {
+            // Nếu không có DayGroup, tạo mới và lưu vào cơ sở dữ liệu
+            var newDayGroups = Arrays.asList(
+                    new DayGroup(1, "Ngày thường", true),
+                    new DayGroup(2, "Ngày cuối tuần", true),
+                    new DayGroup(3, "Ngày lễ", true)
+            );
+            dayGroups = dayGroupRepository.saveAll(newDayGroups);
         }
 
-        var dayGroupApplications = Arrays.asList(
-                new DayGroupApplication(1, dayGroups.get(0), new Date(), 1),
-                new DayGroupApplication(2, dayGroups.get(0), new Date(), 2),
-                new DayGroupApplication(3, dayGroups.get(0), new Date(), 3),
-                new DayGroupApplication(4, dayGroups.get(0), new Date(), 4),
-                new DayGroupApplication(5, dayGroups.get(0), new Date(), 5),
-                new DayGroupApplication(6, dayGroups.get(1), new Date(), 6),
-                new DayGroupApplication(7, dayGroups.get(1), new Date(), 7)
-        );
-
+        // Tạo DayGroupApplication
         if (dayGroupApplicationRepository.count() == 0) {
+            var dayGroupApplications = Arrays.asList(
+                    new DayGroupApplication(1, dayGroups.get(0), new Date(), 1),
+                    new DayGroupApplication(2, dayGroups.get(0), new Date(), 2),
+                    new DayGroupApplication(3, dayGroups.get(0), new Date(), 3),
+                    new DayGroupApplication(4, dayGroups.get(0), new Date(), 4),
+                    new DayGroupApplication(5, dayGroups.get(0), new Date(), 5),
+                    new DayGroupApplication(6, dayGroups.get(1), new Date(), 6),
+                    new DayGroupApplication(7, dayGroups.get(1), new Date(), 7)
+            );
             dayGroupApplicationRepository.saveAll(dayGroupApplications);
         }
+
+        // Tạo Price
+        if (priceRepository.count() == 0) {
+            var prices = Arrays.asList(
+                    new Price(dayGroups.get(0), new BigDecimal("300000"), new BigDecimal("200000")),
+                    new Price(dayGroups.get(1), new BigDecimal("350000"), new BigDecimal("250000")),
+                    new Price(dayGroups.get(2), new BigDecimal("500000"), new BigDecimal("300000"))
+            );
+            priceRepository.saveAll(prices);
+        }
     }
+
 
     /* Reservation */
 
