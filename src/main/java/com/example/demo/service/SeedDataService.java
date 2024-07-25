@@ -42,9 +42,17 @@ public class SeedDataService implements ApplicationRunner {
     // Menu
     private final IMenuItemCategoryRepository menuItemCategoryRepository;
     private final IMenuItemRepository menuItemRepository;
+    // Reservation
+    private final IReservationTimeFrameRepository resTimeFrameRepository;
+    private final IReservationRepository reservationRepository;
+    // Bill
+    private final ITableHistoryRepository tableHistoryRepository;
+    private final IBillRepository billRepository;
+    // Feedback
+    private final IFeedbackRepository feedbackRepository;
 
     @Autowired
-    public SeedDataService(ICustomerRepository customerRepository, IEmployeeRepository employeeRepository, IAccountRepository accountRepository, ITableGroupRepository tableGroupRepository, IBuffetTableRepository buffetTableRepository, IPriceRepository priceRepository, IDayGroupRepository dayGroupRepository, IDayGroupApplicationRepository dayGroupApplicationRepository, IMenuItemCategoryRepository menuItemCategoryRepository, IMenuItemRepository menuItemRepository) {
+    public SeedDataService(ICustomerRepository customerRepository, IEmployeeRepository employeeRepository, IAccountRepository accountRepository, ITableGroupRepository tableGroupRepository, IBuffetTableRepository buffetTableRepository, IPriceRepository priceRepository, IDayGroupRepository dayGroupRepository, IDayGroupApplicationRepository dayGroupApplicationRepository, IMenuItemCategoryRepository menuItemCategoryRepository, IMenuItemRepository menuItemRepository, IReservationTimeFrameRepository resTimeFrameRepository, IReservationRepository reservationRepository, ITableHistoryRepository tableHistoryRepository, IBillRepository billRepository, IFeedbackRepository feedbackRepository, IReservationTimeFrameRepository resTimeFrameRepository1, IReservationRepository reservationRepository1, ITableHistoryRepository tableHistoryRepository1, IBillRepository billRepository1, IFeedbackRepository feedbackRepository1) {
         this.customerRepository = customerRepository;
         this.employeeRepository = employeeRepository;
         this.accountRepository = accountRepository;
@@ -55,6 +63,11 @@ public class SeedDataService implements ApplicationRunner {
         this.dayGroupApplicationRepository = dayGroupApplicationRepository;
         this.menuItemCategoryRepository = menuItemCategoryRepository;
         this.menuItemRepository = menuItemRepository;
+        this.resTimeFrameRepository = resTimeFrameRepository1;
+        this.reservationRepository = reservationRepository1;
+        this.tableHistoryRepository = tableHistoryRepository1;
+        this.billRepository = billRepository1;
+        this.feedbackRepository = feedbackRepository1;
     }
 
     @Override
@@ -67,10 +80,19 @@ public class SeedDataService implements ApplicationRunner {
         seedTables();
 
         // Menu
-        seedMenuItemCategories();
+        seedMenuItems();
 
         // Price
         seedPrices();
+
+        // Reservation
+        seedReservations();
+
+        // Bill
+        seedBills();
+
+        // Feedback
+        seedFeedbacks();
     }
 
     /* Authentication */
@@ -165,22 +187,8 @@ public class SeedDataService implements ApplicationRunner {
         employeeRepository.saveAll(employees);
     }
 
-    /* Bill */
-    public void seedBills() {
-
-    }
-
-    public void seedTableHistories() {
-
-    }
-
-    /* Feedback */
-    public void seedFeedbacks() {
-
-    }
-
-    /* Menu */
-    public void seedMenuItemCategories() {
+    /* 2. Menu */
+    public void seedMenuItems() {
         var menuItemCategories = Arrays.asList(
                 new MenuItemCategory(1, "Khai vị & Ăn kèm", null),
                 new MenuItemCategory(2, "Thịt", null),
@@ -252,32 +260,29 @@ public class SeedDataService implements ApplicationRunner {
         }
     }
 
-    /*Prices*/
+    /* 3. Price */
     public void seedPrices() {
-        // Lấy tất cả DayGroup từ cơ sở dữ liệu
-        var dayGroups = dayGroupRepository.findAll();
+        var dayGroups = Arrays.asList(
+                new DayGroup(1, "Ngày thường", true),
+                new DayGroup(2, "Ngày cuối tuần", true),
+                new DayGroup(3, "Ngày lễ", true)
+        );
 
-        if (dayGroups.isEmpty()) {
-            // Nếu không có DayGroup, tạo mới và lưu vào cơ sở dữ liệu
-            var newDayGroups = Arrays.asList(
-                    new DayGroup(1, "Ngày thường", true),
-                    new DayGroup(2, "Ngày cuối tuần", true),
-                    new DayGroup(3, "Ngày lễ", true)
-            );
-            dayGroups = dayGroupRepository.saveAll(newDayGroups);
+        if (dayGroupRepository.count() == 0) {
+            dayGroupRepository.saveAll(dayGroups);
         }
 
-        // Tạo DayGroupApplication
+        var dayGroupApplications = Arrays.asList(
+                new DayGroupApplication(1, dayGroups.get(0), new Date(), 1),
+                new DayGroupApplication(2, dayGroups.get(0), new Date(), 2),
+                new DayGroupApplication(3, dayGroups.get(0), new Date(), 3),
+                new DayGroupApplication(4, dayGroups.get(0), new Date(), 4),
+                new DayGroupApplication(5, dayGroups.get(0), new Date(), 5),
+                new DayGroupApplication(6, dayGroups.get(1), new Date(), 6),
+                new DayGroupApplication(7, dayGroups.get(1), new Date(), 7)
+        );
+
         if (dayGroupApplicationRepository.count() == 0) {
-            var dayGroupApplications = Arrays.asList(
-                    new DayGroupApplication(1, dayGroups.get(0), new Date(), 1),
-                    new DayGroupApplication(2, dayGroups.get(0), new Date(), 2),
-                    new DayGroupApplication(3, dayGroups.get(0), new Date(), 3),
-                    new DayGroupApplication(4, dayGroups.get(0), new Date(), 4),
-                    new DayGroupApplication(5, dayGroups.get(0), new Date(), 5),
-                    new DayGroupApplication(6, dayGroups.get(1), new Date(), 6),
-                    new DayGroupApplication(7, dayGroups.get(1), new Date(), 7)
-            );
             dayGroupApplicationRepository.saveAll(dayGroupApplications);
         }
 
@@ -292,10 +297,7 @@ public class SeedDataService implements ApplicationRunner {
         }
     }
 
-
-    /* Reservation */
-
-    /* Table */
+    /* 4. Table */
     public void seedTables() {
         var tableGroups = Arrays.asList(
                 new TableGroup(1, "Bàn 1 - 2 người", 1, 2),
@@ -332,4 +334,18 @@ public class SeedDataService implements ApplicationRunner {
         }
     }
 
+    /* 5. Reservation */
+    public void seedReservations() {
+
+    }
+
+    /* 6. Bill */
+    public void seedBills() {
+
+    }
+
+    /* 7. Feedback */
+    public void seedFeedbacks() {
+
+    }
 }
