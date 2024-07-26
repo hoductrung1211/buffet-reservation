@@ -18,6 +18,7 @@ public class MenuItemCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int menuItemCategoryId;
+
     @Column(nullable = false)
     private String menuItemCategoryName;
 

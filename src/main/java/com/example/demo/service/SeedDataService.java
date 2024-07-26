@@ -4,11 +4,18 @@ import com.example.demo.model.auth.Account;
 import com.example.demo.model.auth.Customer;
 import com.example.demo.model.auth.Employee;
 import com.example.demo.model.auth.Role;
+import com.example.demo.model.bill.Bill;
+import com.example.demo.model.bill.TableHistory;
+import com.example.demo.model.bill.TableHistoryStatus;
 import com.example.demo.model.menu.MenuItem;
 import com.example.demo.model.menu.MenuItemCategory;
 import com.example.demo.model.menu.MenuItemGroup;
 import com.example.demo.model.price.DayGroup;
 import com.example.demo.model.price.DayGroupApplication;
+import com.example.demo.model.price.Price;
+import com.example.demo.model.reservation.Reservation;
+import com.example.demo.model.reservation.ReservationStatus;
+import com.example.demo.model.reservation.ReservationTimeFrame;
 import com.example.demo.model.table.BuffetTable;
 import com.example.demo.model.table.TableGroup;
 import com.example.demo.repository.*;
@@ -18,8 +25,9 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.math.BigDecimal;
+import java.sql.Time;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -40,9 +48,17 @@ public class SeedDataService implements ApplicationRunner {
     // Menu
     private final IMenuItemCategoryRepository menuItemCategoryRepository;
     private final IMenuItemRepository menuItemRepository;
+    // Reservation
+    private final IReservationTimeFrameRepository resTimeFrameRepository;
+    private final IReservationRepository reservationRepository;
+    // Bill
+    private final ITableHistoryRepository tableHistoryRepository;
+    private final IBillRepository billRepository;
+    // Feedback
+    private final IFeedbackRepository feedbackRepository;
 
     @Autowired
-    public SeedDataService(ICustomerRepository customerRepository, IEmployeeRepository employeeRepository, IAccountRepository accountRepository, ITableGroupRepository tableGroupRepository, IBuffetTableRepository buffetTableRepository, IPriceRepository priceRepository, IDayGroupRepository dayGroupRepository, IDayGroupApplicationRepository dayGroupApplicationRepository, IMenuItemCategoryRepository menuItemCategoryRepository, IMenuItemRepository menuItemRepository) {
+    public SeedDataService(ICustomerRepository customerRepository, IEmployeeRepository employeeRepository, IAccountRepository accountRepository, ITableGroupRepository tableGroupRepository, IBuffetTableRepository buffetTableRepository, IPriceRepository priceRepository, IDayGroupRepository dayGroupRepository, IDayGroupApplicationRepository dayGroupApplicationRepository, IMenuItemCategoryRepository menuItemCategoryRepository, IMenuItemRepository menuItemRepository, IReservationTimeFrameRepository resTimeFrameRepository, IReservationRepository reservationRepository, ITableHistoryRepository tableHistoryRepository, IBillRepository billRepository, IFeedbackRepository feedbackRepository, IReservationTimeFrameRepository resTimeFrameRepository1, IReservationRepository reservationRepository1, ITableHistoryRepository tableHistoryRepository1, IBillRepository billRepository1, IFeedbackRepository feedbackRepository1) {
         this.customerRepository = customerRepository;
         this.employeeRepository = employeeRepository;
         this.accountRepository = accountRepository;
@@ -53,6 +69,11 @@ public class SeedDataService implements ApplicationRunner {
         this.dayGroupApplicationRepository = dayGroupApplicationRepository;
         this.menuItemCategoryRepository = menuItemCategoryRepository;
         this.menuItemRepository = menuItemRepository;
+        this.resTimeFrameRepository = resTimeFrameRepository1;
+        this.reservationRepository = reservationRepository1;
+        this.tableHistoryRepository = tableHistoryRepository1;
+        this.billRepository = billRepository1;
+        this.feedbackRepository = feedbackRepository1;
     }
 
     @Override
@@ -65,10 +86,19 @@ public class SeedDataService implements ApplicationRunner {
         seedTables();
 
         // Menu
-        seedMenuItemCategories();
+        seedMenuItems();
 
         // Price
         seedPrices();
+
+        // Reservation
+        seedReservations();
+
+        // Bill
+        seedBills();
+
+        // Feedback
+        seedFeedbacks();
     }
 
     /* Authentication */
@@ -163,22 +193,8 @@ public class SeedDataService implements ApplicationRunner {
         employeeRepository.saveAll(employees);
     }
 
-    /* Bill */
-    public void seedBills() {
-
-    }
-
-    public void seedTableHistories() {
-
-    }
-
-    /* Feedback */
-    public void seedFeedbacks() {
-
-    }
-
-    /* Menu */
-    public void seedMenuItemCategories() {
+    /* 2. Menu */
+    public void seedMenuItems() {
         var menuItemCategories = Arrays.asList(
                 new MenuItemCategory(1, "Khai vị & Ăn kèm", null),
                 new MenuItemCategory(2, "Thịt", null),
@@ -250,7 +266,7 @@ public class SeedDataService implements ApplicationRunner {
         }
     }
 
-    /* Price */
+    /* 3. Price */
     public void seedPrices() {
         var dayGroups = Arrays.asList(
                 new DayGroup(1, "Ngày thường", true),
@@ -275,11 +291,19 @@ public class SeedDataService implements ApplicationRunner {
         if (dayGroupApplicationRepository.count() == 0) {
             dayGroupApplicationRepository.saveAll(dayGroupApplications);
         }
+
+        // Tạo Price
+        if (priceRepository.count() == 0) {
+            var prices = Arrays.asList(
+                    new Price(dayGroups.get(0), new BigDecimal("150000"), new BigDecimal("100000")),
+                    new Price(dayGroups.get(1), new BigDecimal("200000"), new BigDecimal("150000")),
+                    new Price(dayGroups.get(2), new BigDecimal("220000"), new BigDecimal("170000"))
+            );
+            priceRepository.saveAll(prices);
+        }
     }
 
-    /* Reservation */
-
-    /* Table */
+    /* 4. Table */
     public void seedTables() {
         var tableGroups = Arrays.asList(
                 new TableGroup(1, "Bàn 1 - 2 người", 1, 2),
@@ -316,4 +340,72 @@ public class SeedDataService implements ApplicationRunner {
         }
     }
 
+    /* 5. Reservation */
+    public void seedReservations() {
+        var reservationTimeFrames = Arrays.asList(
+                new ReservationTimeFrame(1, "Khung 10h - 12h", new Time(36000000), new Time(43200000), true),
+                new ReservationTimeFrame(2, "Khung 12h - 14h", new Time(43200000), new Time(50400000), true),
+                new ReservationTimeFrame(3, "Khung 14h - 16h", new Time(50400000), new Time(57600000), true),
+                new ReservationTimeFrame(4, "Khung 16h - 18h", new Time(57600000), new Time(64800000), true),
+                new ReservationTimeFrame(5, "Khung 18h - 20h", new Time(64800000), new Time(72000000), true),
+                new ReservationTimeFrame(6, "Khung 20h - 22h", new Time(72000000), new Time(79200000), true)
+        );
+
+        if (resTimeFrameRepository.count() == 0) {
+            resTimeFrameRepository.saveAll(reservationTimeFrames);
+        }
+
+        if (reservationRepository.count() == 0) {
+            var customers = customerRepository.findAll();
+
+            var reservations = Arrays.asList(
+                    new Reservation(1, customers.get(0), reservationTimeFrames.get(0), DateUtil.parseDate("2024-07-23"), 2, 0, "", LocalDateTime.now(), ReservationStatus.INIT),
+                    new Reservation(2, customers.get(1), reservationTimeFrames.get(1), DateUtil.parseDate("2024-07-23"), 3, 0, "", LocalDateTime.now(), ReservationStatus.INIT),
+                    new Reservation(3, customers.get(2), reservationTimeFrames.get(2), DateUtil.parseDate("2024-07-23"), 4, 0, "", LocalDateTime.now(), ReservationStatus.INIT),
+                    new Reservation(4, customers.get(3), reservationTimeFrames.get(3), DateUtil.parseDate("2024-07-23"), 2, 1, "", LocalDateTime.now(), ReservationStatus.INIT),
+                    new Reservation(5, customers.get(4), reservationTimeFrames.get(4), DateUtil.parseDate("2024-07-23"), 3, 0, "", LocalDateTime.now(), ReservationStatus.INIT),
+                    new Reservation(6, customers.get(5), reservationTimeFrames.get(5), DateUtil.parseDate("2024-07-23"), 4, 0, "", LocalDateTime.now(), ReservationStatus.INIT)
+            );
+
+            reservationRepository.saveAll(reservations);
+        }
+    }
+
+    /* 6. Bill */
+    public void seedBills() {
+        if (tableHistoryRepository.count() == 0) {
+            var tables = buffetTableRepository.findAll();
+            var reservations = reservationRepository.findAll();
+
+            var tableHistories = Arrays.asList(
+                    new TableHistory(1, tables.get(0), reservations.get(0), LocalDateTime.of(2024, 7, 23, 10, 10), LocalDateTime.of(2024, 7, 23, 11, 30), 2, 0, TableHistoryStatus.FINISHED),
+                    new TableHistory(2, tables.get(1), reservations.get(1), LocalDateTime.of(2024, 7, 23, 12, 11), LocalDateTime.of(2024, 7, 23, 13, 45), 2, 0, TableHistoryStatus.FINISHED),
+                    new TableHistory(3, tables.get(2), reservations.get(2), LocalDateTime.of(2024, 7, 23, 14, 31), LocalDateTime.of(2024, 7, 23, 15, 30), 2, 0, TableHistoryStatus.FINISHED),
+                    new TableHistory(4, tables.get(3), reservations.get(3), LocalDateTime.of(2024, 7, 23, 16, 20), LocalDateTime.of(2024, 7, 23, 17, 44), 2, 0, TableHistoryStatus.FINISHED),
+                    new TableHistory(5, tables.get(4), reservations.get(4), LocalDateTime.of(2024, 7, 23, 18, 11), LocalDateTime.of(2024, 7, 23, 19, 55), 2, 0, TableHistoryStatus.FINISHED),
+                    new TableHistory(6, tables.get(5), reservations.get(4), LocalDateTime.of(2024, 7, 23, 20, 9), LocalDateTime.of(2024, 7, 23, 21, 50), 2, 0, TableHistoryStatus.FINISHED)
+            );
+
+            tableHistoryRepository.saveAll(tableHistories);
+
+            var employees = employeeRepository.findAll();
+            var prices = priceRepository.findAll();
+
+            var bills = Arrays.asList(
+                    new Bill(1, employees.get(0), tableHistories.get(0), prices.get(0), 0, "", new BigDecimal("300000")),
+                    new Bill(2, employees.get(0), tableHistories.get(1), prices.get(0), 0, "", new BigDecimal("450000")),
+                    new Bill(3, employees.get(1), tableHistories.get(2), prices.get(0), 0, "", new BigDecimal("600000")),
+                    new Bill(4, employees.get(1), tableHistories.get(3), prices.get(0), 0, "", new BigDecimal("400000")),
+                    new Bill(5, employees.get(2), tableHistories.get(4), prices.get(0), 0, "", new BigDecimal("450000")),
+                    new Bill(6, employees.get(2), tableHistories.get(5), prices.get(0), 0, "", new BigDecimal("600000"))
+            );
+
+            billRepository.saveAll(bills);
+        }
+    }
+
+    /* 7. Feedback */
+    public void seedFeedbacks() {
+
+    }
 }

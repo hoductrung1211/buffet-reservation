@@ -1,5 +1,6 @@
 package com.example.demo.model.price;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,6 +27,7 @@ public class DayGroup {
     private boolean isActive = true;
 
     @OneToMany(mappedBy = "dayGroup", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<DayGroupApplication> dayGroupApplications = new ArrayList<>();
 
     @OneToMany(mappedBy = "dayGroup", cascade = CascadeType.ALL, orphanRemoval = true)

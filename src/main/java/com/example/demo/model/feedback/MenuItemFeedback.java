@@ -1,7 +1,7 @@
 package com.example.demo.model.feedback;
 
 import com.example.demo.model.auth.Customer;
-import com.example.demo.model.reservation.Reservation;
+import com.example.demo.model.menu.MenuItem;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,14 +16,18 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Feedback {
+public class MenuItemFeedback {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int feedbackId;
+    private String menuItemFeedbackId;
 
     @ManyToOne()
-    @JoinColumn(name = "reservation_id", nullable = false)
-    private Reservation reservation;
+    @JoinColumn(name = "menu_item_id", nullable = false)
+    private MenuItem menuItem;
+
+    @ManyToOne()
+    @JoinColumn(name = "customer_id", nullable = false)
+    private Customer customer;
 
     private int rating;
 
