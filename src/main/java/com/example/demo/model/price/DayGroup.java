@@ -25,6 +25,7 @@ public class DayGroup {
     private String dayGroupName;
 
     private boolean isActive = true;
+
     @OneToMany(mappedBy = "dayGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<DayGroupApplication> dayGroupApplications = new ArrayList<>();

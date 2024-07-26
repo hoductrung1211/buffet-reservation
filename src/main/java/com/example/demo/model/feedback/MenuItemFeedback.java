@@ -22,7 +22,7 @@ public class MenuItemFeedback {
     private String menuItemFeedbackId;
 
     @ManyToOne()
-    @JoinColumn(name = "menuItemId", nullable = false)
+    @JoinColumn(name = "menu_item_id", nullable = false)
     private MenuItem menuItem;
 
     @ManyToOne()
