@@ -3,9 +3,10 @@ package com.example.demo.service;
 import com.example.demo.model.table.TableGroup;
 import com.example.demo.repository.ITableGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.net.URI;
 import java.util.Optional;
 
 @Service
@@ -17,8 +18,8 @@ public class TableGroupService {
         this.tableGroupRepository = tableGroupRepository;
     }
 
-    public List<TableGroup> getAllTableGroups() {
-        return tableGroupRepository.findAll();
+    public Iterable<TableGroup> getAllTableGroups(PageRequest pageRequest) {
+        return tableGroupRepository.findAll(pageRequest);
     }
 
     public Optional<TableGroup> getTableGroupById(int tableGroupId) {
