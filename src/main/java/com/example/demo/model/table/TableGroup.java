@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -36,7 +37,7 @@ public class TableGroup {
 
     @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
-    private List<BuffetTable> buffetTables;
+    private List<BuffetTable> buffetTables = new ArrayList<>();
 
     @PrePersist
     @PreUpdate

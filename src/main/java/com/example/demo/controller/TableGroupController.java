@@ -34,8 +34,8 @@ public class TableGroupController {
 
     @GetMapping("/{id}")
     public ResponseEntity<TableGroup> getTableGroupById(@PathVariable int id) {
-        var tableGroup = tableGroupService.getTableGroupById(id);
-        return tableGroup.map(ResponseEntity::ok)
+        return tableGroupService.getTableGroupById(id)
+                .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -66,31 +66,16 @@ public class TableGroupController {
             @PathVariable int id,
             @RequestBody CreateTableGroupReq req
     ) {
-        try {
-            new TableGroup();
-            var updatedTableGroup = tableGroupService.updateTableGroup(
-                    id,
-                    TableGroup
-                            .builder()
-                            .tableGroupName(req.getTableGroupName())
-                            .minPeopleQuantity(req.getMinPeopleQuantity())
-                            .maxPeopleQuantity(req.getMaxPeopleQuantity())
-                            .build()
-            );
-
-            return ResponseEntity.ok(tableGroupService.updateTableGroup(id, updatedTableGroup));
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return tableGroupService.updateTableGroup(id, req)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTableGroup(@PathVariable int id) {
-        try {
-            tableGroupService.deleteTableGroup(id);
+        if (tableGroupService.deleteTableGroup(id)) {
             return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.notFound().build();
     }
 }

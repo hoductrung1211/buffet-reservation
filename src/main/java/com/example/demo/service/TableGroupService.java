@@ -1,12 +1,12 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.CreateTableGroupReq;
 import com.example.demo.model.table.TableGroup;
 import com.example.demo.repository.ITableGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.net.URI;
 import java.util.Optional;
 
 @Service
@@ -30,20 +30,22 @@ public class TableGroupService {
         return tableGroupRepository.save(tableGroup);
     }
 
-    public TableGroup updateTableGroup(int tableGroupId, TableGroup tableGroup) {
-        if (tableGroupRepository.existsById(tableGroupId)) {
-            tableGroup.setTableGroupId(tableGroupId);
-            return tableGroupRepository.save(tableGroup);
-        } else {
-            throw new RuntimeException("TableGroup not found");
-        }
+    public Optional<TableGroup> updateTableGroup(int tableGroupId, CreateTableGroupReq req) {
+        return tableGroupRepository.findById(tableGroupId)
+                .map(tableGroup -> {
+                    tableGroup.setTableGroupName(req.getTableGroupName());
+                    tableGroup.setMinPeopleQuantity(req.getMinPeopleQuantity());
+                    tableGroup.setMaxPeopleQuantity(req.getMaxPeopleQuantity());
+
+                    return tableGroupRepository.save(tableGroup);
+                });
     }
 
-    public void deleteTableGroup(int tableGroupId) {
+    public boolean deleteTableGroup(int tableGroupId) {
         if (tableGroupRepository.existsById(tableGroupId)) {
             tableGroupRepository.deleteById(tableGroupId);
-        } else {
-            throw new RuntimeException("TableGroup not found");
+            return true;
         }
+        return false;
     }
 }
