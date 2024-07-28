@@ -42,21 +42,14 @@ public class TableGroupController {
     @PostMapping(consumes = "application/json", produces = "application/json")
     public ResponseEntity<TableGroup> createTableGroup(@RequestBody CreateTableGroupReq req) {
         try {
-            var createdTableGroup = tableGroupService.createTableGroup(
-                    TableGroup
-                            .builder()
-                            .tableGroupName(req.getTableGroupName())
-                            .minPeopleQuantity(req.getMinPeopleQuantity())
-                            .maxPeopleQuantity(req.getMaxPeopleQuantity())
-                            .build()
-            );
+            var createdTableGroup = tableGroupService.createTableGroup(req);
             URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                     .path("/{id}")
                     .buildAndExpand(createdTableGroup.getTableGroupId())
                     .toUri();
 
             return ResponseEntity.created(location).body(createdTableGroup);
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(null);
         }
     }
@@ -68,7 +61,7 @@ public class TableGroupController {
     ) {
         return tableGroupService.updateTableGroup(id, req)
                 .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
     @DeleteMapping("/{id}")

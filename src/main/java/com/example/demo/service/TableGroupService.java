@@ -26,21 +26,29 @@ public class TableGroupService {
         return tableGroupRepository.findById(tableGroupId);
     }
 
-    public TableGroup createTableGroup(TableGroup tableGroup) {
-        return tableGroupRepository.save(tableGroup);
+    public TableGroup createTableGroup(CreateTableGroupReq createTableGroup) {
+        return tableGroupRepository.save(
+                TableGroup
+                    .builder()
+                    .tableGroupName(createTableGroup.getTableGroupName())
+                    .minPeopleQuantity(createTableGroup.getMinPeopleQuantity())
+                    .maxPeopleQuantity(createTableGroup.getMaxPeopleQuantity())
+                    .build()
+        );
     }
 
-    public Optional<TableGroup> updateTableGroup(int tableGroupId, CreateTableGroupReq req) {
+    public Optional<TableGroup> updateTableGroup(int tableGroupId, CreateTableGroupReq updateTableGroup) {
         return tableGroupRepository.findById(tableGroupId)
                 .map(tableGroup -> {
-                    tableGroup.setTableGroupName(req.getTableGroupName());
-                    tableGroup.setMinPeopleQuantity(req.getMinPeopleQuantity());
-                    tableGroup.setMaxPeopleQuantity(req.getMaxPeopleQuantity());
+                    tableGroup.setTableGroupName(updateTableGroup.getTableGroupName());
+                    tableGroup.setMinPeopleQuantity(updateTableGroup.getMinPeopleQuantity());
+                    tableGroup.setMaxPeopleQuantity(updateTableGroup.getMaxPeopleQuantity());
 
                     return tableGroupRepository.save(tableGroup);
                 });
     }
 
+    // TODO: Update this: void ... like BuffetTableService delete method
     public boolean deleteTableGroup(int tableGroupId) {
         if (tableGroupRepository.existsById(tableGroupId)) {
             tableGroupRepository.deleteById(tableGroupId);
