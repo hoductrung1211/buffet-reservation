@@ -2,10 +2,7 @@ package com.example.demo.model.price;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 public class DayGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -37,5 +35,9 @@ public class DayGroup {
         this.dateGroupId = dateGroupId;
         this.dayGroupName = dayGroupName;
         this.isActive = isActive;
+    }
+
+    public Object getDayGroupById() {
+        return null;
     }
 }

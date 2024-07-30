@@ -44,7 +44,7 @@ public class BuffetTableService {
     }
 
     public Optional<BuffetTable> updateBuffetTable(int buffetTableId, CreateBuffetTableReq updateBuffetTable) {
-        return buffetTableRepository.findById(buffetTableId)
+        return Optional.ofNullable(buffetTableRepository.findById(buffetTableId)
                 .map(buffetTable -> {
                     var tablegroup = tableGroupRepository.findById(updateBuffetTable.getTableGroupId())
                             .orElseThrow(() -> new NoSuchElementException("Table group not found"));
@@ -53,12 +53,13 @@ public class BuffetTableService {
                     buffetTable.setTableGroup(tablegroup);
 
                     return buffetTableRepository.save(buffetTable);
-                });
+                })
+                .orElseThrow(() -> new NoSuchElementException("No such buffet table with ID: " + buffetTableId)));
     }
 
     public void deleteBuffetTable(int buffetTableId) {
         BuffetTable buffetTable = buffetTableRepository.findById(buffetTableId)
-                .orElseThrow(() -> new NoSuchElementException("No such buffet table with ID " + buffetTableId));
+                .orElseThrow(() -> new NoSuchElementException("No such buffet table with ID: " + buffetTableId));
         buffetTableRepository.delete(buffetTable);
     }
 }

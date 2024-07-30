@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/buffet-tables")
@@ -56,7 +55,10 @@ public class BuffetTableController {
     }
 
     @PutMapping(value = "/{buffetTableId}", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<BuffetTable> updateDayGroup(@PathVariable(value = "buffetTableId") int buffetTableId, @RequestBody CreateBuffetTableReq req) {
+    public ResponseEntity<BuffetTable> updateDayGroup(
+            @PathVariable(value = "buffetTableId") int buffetTableId,
+            @RequestBody CreateBuffetTableReq req
+    ) {
         return buffetTableService.updateBuffetTable(buffetTableId, req)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.badRequest().build());

@@ -1,13 +1,15 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.CreateDayGroupReq;
 import com.example.demo.model.price.DayGroup;
 import com.example.demo.service.DayGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.util.List;
-import java.util.Optional;
+import java.net.URI;
 
 @RestController
 @RequestMapping("/api/day-groups")
@@ -20,19 +22,36 @@ public class DayGroupController {
     }
 
     @GetMapping
-    public List<DayGroup> getAllDayGroups() {
-        return dayGroupService.getAllDayGroups();
+    public ResponseEntity<Iterable<DayGroup>> getAllDayGroups(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        var pageable = PageRequest.of(page,size);
+        var dayGroups = dayGroupService.getAllDayGroups(pageable);
+
+        return ResponseEntity.ok(dayGroups);
     }
 
     @GetMapping("/{dayGroupId}")
     public ResponseEntity<DayGroup> getDayGroupById(@PathVariable(value = "dayGroupId") int dayGroupId) {
-        Optional<DayGroup> dayGroup = dayGroupService.getDayGroupById(dayGroupId);
-        return dayGroup.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return dayGroupService.getDayGroupById(dayGroupId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
-    public DayGroup createDayGroup(@RequestBody DayGroup dayGroup) {
-        return dayGroupService.createDayGroup(dayGroup);
+    @PostMapping(consumes = "application/json", produces = "application/json")
+    public ResponseEntity<DayGroup> createDayGroup(@RequestBody CreateDayGroupReq req) {
+        try {
+            var createdDayGroup = dayGroupService.createDayGroup(req);
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(createdDayGroup.getDayGroupById())
+                    .toUri();
+
+            return ResponseEntity.created(location).body(createdDayGroup);
+        } catch (Exception ex) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PutMapping("/{dayGroupId}")
