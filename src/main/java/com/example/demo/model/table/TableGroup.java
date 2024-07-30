@@ -2,11 +2,9 @@ package com.example.demo.model.table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,14 +13,18 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 public class TableGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int tableGroupId;
-    @Column(nullable = false)
+
+    @Column(nullable = false, unique = true)
     private String tableGroupName;
+
     @Column(nullable = false)
     private int minPeopleQuantity;
+
     @Column(nullable = false)
     private int maxPeopleQuantity;
 
@@ -35,7 +37,7 @@ public class TableGroup {
 
     @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
-    private List<BuffetTable> buffetTables;
+    private List<BuffetTable> buffetTables = new ArrayList<>();
 
     @PrePersist
     @PreUpdate

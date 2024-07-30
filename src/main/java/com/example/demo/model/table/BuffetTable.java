@@ -2,10 +2,7 @@ package com.example.demo.model.table;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(schema = "buffet_table")
@@ -13,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 public class BuffetTable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

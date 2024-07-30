@@ -1,11 +1,12 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.CreateTableGroupReq;
 import com.example.demo.model.table.TableGroup;
 import com.example.demo.repository.ITableGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,32 +18,42 @@ public class TableGroupService {
         this.tableGroupRepository = tableGroupRepository;
     }
 
-    public List<TableGroup> getAllTableGroups() {
-        return tableGroupRepository.findAll();
+    public Iterable<TableGroup> getAllTableGroups(PageRequest pageRequest) {
+        return tableGroupRepository.findAll(pageRequest);
     }
 
     public Optional<TableGroup> getTableGroupById(int tableGroupId) {
         return tableGroupRepository.findById(tableGroupId);
     }
 
-    public TableGroup createTableGroup(TableGroup tableGroup) {
-        return tableGroupRepository.save(tableGroup);
+    public TableGroup createTableGroup(CreateTableGroupReq createTableGroup) {
+        return tableGroupRepository.save(
+                TableGroup
+                    .builder()
+                    .tableGroupName(createTableGroup.getTableGroupName())
+                    .minPeopleQuantity(createTableGroup.getMinPeopleQuantity())
+                    .maxPeopleQuantity(createTableGroup.getMaxPeopleQuantity())
+                    .build()
+        );
     }
 
-    public TableGroup updateTableGroup(int tableGroupId, TableGroup tableGroup) {
-        if (tableGroupRepository.existsById(tableGroupId)) {
-            tableGroup.setTableGroupId(tableGroupId);
-            return tableGroupRepository.save(tableGroup);
-        } else {
-            throw new RuntimeException("TableGroup not found");
-        }
+    public Optional<TableGroup> updateTableGroup(int tableGroupId, CreateTableGroupReq updateTableGroup) {
+        return tableGroupRepository.findById(tableGroupId)
+                .map(tableGroup -> {
+                    tableGroup.setTableGroupName(updateTableGroup.getTableGroupName());
+                    tableGroup.setMinPeopleQuantity(updateTableGroup.getMinPeopleQuantity());
+                    tableGroup.setMaxPeopleQuantity(updateTableGroup.getMaxPeopleQuantity());
+
+                    return tableGroupRepository.save(tableGroup);
+                });
     }
 
-    public void deleteTableGroup(int tableGroupId) {
+    // TODO: Update this: void ... like BuffetTableService delete method
+    public boolean deleteTableGroup(int tableGroupId) {
         if (tableGroupRepository.existsById(tableGroupId)) {
             tableGroupRepository.deleteById(tableGroupId);
-        } else {
-            throw new RuntimeException("TableGroup not found");
+            return true;
         }
+        return false;
     }
 }
