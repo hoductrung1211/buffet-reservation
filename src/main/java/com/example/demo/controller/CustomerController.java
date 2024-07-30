@@ -7,6 +7,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/api/customers")
 public class CustomerController {
@@ -27,7 +29,7 @@ public class CustomerController {
         Iterable<Customer> customers;
 
         if (phone != null && !phone.isEmpty()) {
-            customers = customerService.findByPhone(phone, pageable);
+            customers = customerService.getCustomersByPhone(phone, pageable);
         } else {
             customers = customerService.getAllCustomers(pageable);
         }
@@ -36,11 +38,12 @@ public class CustomerController {
     }
 
     @GetMapping("/{customerId}")
-    public ResponseEntity<Customer> findById(@PathVariable int customerId) {
-        var customer = customerService.findById(customerId);
-        if (customer == null) {
+    public ResponseEntity<Optional<Customer>> findById(@PathVariable int customerId) {
+        var customer = customerService.getCustomerById(customerId);
+        if (customer.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+
         return ResponseEntity.ok(customer);
     }
 }
