@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.CreateDayGroupReq;
+import com.example.demo.dto.UpdateDayGroupReq;
 import com.example.demo.model.price.DayGroup;
 import com.example.demo.service.DayGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,10 +56,13 @@ public class DayGroupController {
     }
 
     @PutMapping("/{dayGroupId}")
-    public ResponseEntity<DayGroup> updateDayGroup(@PathVariable(value = "dayGroupId") int dayGroupId, @RequestBody DayGroup dayGroupDetails) {
+    public ResponseEntity<DayGroup> updateDayGroup(
+            @PathVariable(value = "dayGroupId") int dayGroupId,
+            @RequestBody UpdateDayGroupReq dayGroupDetails
+    ) {
         try {
-            DayGroup updatedDayGroup = dayGroupService.updateDayGroup(dayGroupId, dayGroupDetails);
-            return ResponseEntity.ok(updatedDayGroup);
+            var updatedDayGroup = dayGroupService.updateDayGroup(dayGroupId, dayGroupDetails);
+            return ResponseEntity.ok(updatedDayGroup.get());
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
