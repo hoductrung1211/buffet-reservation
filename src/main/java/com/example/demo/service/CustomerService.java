@@ -1,9 +1,11 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.account.ChangePassRequest;
 import com.example.demo.model.auth.Customer;
 import com.example.demo.repository.ICustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -28,4 +30,5 @@ public class CustomerService {
     public Optional<Customer> getCustomerById(int customerId) {
         return customerRepository.findById(customerId);
     }
+
 }
