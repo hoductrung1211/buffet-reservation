@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.awt.*;
 import java.util.List;
 
 @Entity
@@ -19,6 +18,7 @@ public class MenuItemCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int menuItemCategoryId;
+
     @Column(nullable = false)
     private String menuItemCategoryName;
 
@@ -31,4 +31,10 @@ public class MenuItemCategory {
 
     @OneToMany(mappedBy = "menuItemCategory", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MenuItem> menuItems;
+
+    public MenuItemCategory(int menuItemCategoryId, String menuItemCategoryName, MenuItemCategory supMenuItemCategory) {
+        this.menuItemCategoryId = menuItemCategoryId;
+        this.menuItemCategoryName = menuItemCategoryName;
+        this.supMenuItemCategory = supMenuItemCategory;
+    }
 }

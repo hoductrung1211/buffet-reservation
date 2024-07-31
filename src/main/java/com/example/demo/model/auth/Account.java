@@ -18,6 +18,9 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int accountId;
 
+    @Transient
+    private String username;
+
     @Column(nullable = false)
     private String password;
 
@@ -32,4 +35,18 @@ public class Account {
 
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
     private Customer customer;
+
+    public Account(int accountId, String password, Role role, boolean isActive) {
+        this.accountId = accountId;
+        this.password = password;
+        this.role = role;
+        this.isActive = isActive;
+    }
+
+    public Account(String username, String password, Role role, boolean isActive) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.isActive = isActive;
+    }
 }

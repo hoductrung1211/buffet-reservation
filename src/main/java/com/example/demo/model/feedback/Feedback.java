@@ -1,6 +1,7 @@
 package com.example.demo.model.feedback;
 
 import com.example.demo.model.auth.Customer;
+import com.example.demo.model.reservation.Reservation;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,7 +11,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(schema = "bill")
+@Table(schema = "feedback")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -21,8 +22,8 @@ public class Feedback {
     private int feedbackId;
 
     @ManyToOne()
-    @JoinColumn(name = "customer_id", nullable = false)
-    private Customer customer;
+    @JoinColumn(name = "reservation_id", nullable = false)
+    private Reservation reservation;
 
     private int rating;
 

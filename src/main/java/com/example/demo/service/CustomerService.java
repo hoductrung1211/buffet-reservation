@@ -1,10 +1,14 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.account.ChangePassRequest;
 import com.example.demo.model.auth.Customer;
 import com.example.demo.repository.ICustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class CustomerService {
@@ -19,11 +23,12 @@ public class CustomerService {
         return customerRepository.findAll(pageRequest);
     }
 
-    public Iterable<Customer> findByPhone(String phone, PageRequest pageRequest) {
-        return customerRepository.findByPhone(phone, pageRequest);
+    public Iterable<Customer> getCustomersByPhone(String phone, PageRequest pageRequest) {
+        return customerRepository.getByPhone(phone, pageRequest);
     }
 
-    public Customer findById(int customerId) {
-        return customerRepository.findByCustomerId(customerId);
+    public Optional<Customer> getCustomerById(int customerId) {
+        return customerRepository.findById(customerId);
     }
+
 }

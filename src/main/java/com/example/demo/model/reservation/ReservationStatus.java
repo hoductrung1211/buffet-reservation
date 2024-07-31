@@ -4,8 +4,8 @@ import lombok.Getter;
 
 @Getter
 public enum ReservationStatus {
-    UNIT(1),
-    CANCELEd(2);
+    INIT(1),
+    CANCELED(2);
 
     private final int value;
 

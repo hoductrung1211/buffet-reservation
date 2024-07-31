@@ -34,4 +34,12 @@ public class ReservationTimeFrame {
 
     @OneToMany(mappedBy = "reservationTimeFrame")
     private List<Reservation> reservations = new ArrayList<>();
+
+    public ReservationTimeFrame(int reservationTimeFrameId, String reservationTimeFrameName, Time startTime, Time endTime, boolean isActive) {
+        this.reservationTimeFrameId = reservationTimeFrameId;
+        this.reservationTimeFrameName = reservationTimeFrameName;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.isActive = isActive;
+    }
 }

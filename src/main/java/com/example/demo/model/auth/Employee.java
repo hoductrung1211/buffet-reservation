@@ -18,15 +18,22 @@ public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int employeeId;
+
     @Column(nullable = false)
     private String fullName;
+
     private boolean gender;
+
     private Date dateOfBirth;
+
     @Column(nullable = false, unique = true)
     private String idCard;
+
     private String address;
-    @Column(nullable = false, unique = true)
+
+    @Column(nullable = false)
     private String phone;
+
     private String email;
 
     @OneToOne

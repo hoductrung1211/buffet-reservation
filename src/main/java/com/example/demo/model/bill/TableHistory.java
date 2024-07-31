@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(schema = "bill")
@@ -40,4 +41,27 @@ public class TableHistory {
 
     @Convert(converter = TableHistoryStatusConverter.class)
     private TableHistoryStatus tableHistoryStatus;
+
+    @OneToMany(mappedBy = "tableHistory", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TableHistoryMenuItem> menuItems;
+
+    public TableHistory(
+            int tableHistoryId,
+            BuffetTable buffetTable,
+            Reservation reservation,
+            LocalDateTime startDateTime,
+            LocalDateTime endDateTime,
+            int adultsQuantity,
+            int childrenQuantity,
+            TableHistoryStatus tableHistoryStatus
+    ) {
+        this.tableHistoryId = tableHistoryId;
+        this.buffetTable = buffetTable;
+        this.reservation = reservation;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+        this.adultsQuantity = adultsQuantity;
+        this.childrenQuantity = childrenQuantity;
+        this.tableHistoryStatus = tableHistoryStatus;
+    }
 }
