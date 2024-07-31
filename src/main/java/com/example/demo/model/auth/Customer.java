@@ -49,6 +49,11 @@ public class Customer {
         this.account = account;
     }
 
+    public Customer(String fullName, String phone, Account account) {
+        this.fullName = fullName;
+        this.phone = phone;
+        this.account = account;
+    }
 
     @OneToMany(mappedBy = "customer")
     private List<Reservation> reservations = new ArrayList<>();

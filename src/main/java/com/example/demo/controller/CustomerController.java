@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.account.ChangePassRequest;
 import com.example.demo.model.auth.Customer;
 import com.example.demo.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,4 +47,5 @@ public class CustomerController {
 
         return ResponseEntity.ok(customer);
     }
+
 }
