@@ -19,7 +19,7 @@ public class FirebaseInitialize {
 
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                    .setStorageBucket("booking-3f25f.appspot.com")
+                    .setStorageBucket("buffet-b2b27.appspot.com")
                     .build();
 
             FirebaseApp.initializeApp(options);

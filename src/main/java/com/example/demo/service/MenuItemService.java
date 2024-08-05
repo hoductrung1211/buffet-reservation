@@ -96,8 +96,8 @@ public class MenuItemService {
         try {
             String fileName = save(image);
             String urlImage = getImageUrl(fileName);
-            MenuItemCategory menuItemCategory = menuItemCategoryRepository.findById(cuMenuItemReq.getMenuItemId()).get();
-            MenuItem menuItem = new MenuItem(cuMenuItemReq.getMenuItemName(),menuItemCategory, MenuItemGroup.valueOf(cuMenuItemReq.getMenuItemGroup()),
+            MenuItemCategory menuItemCategory = menuItemCategoryRepository.findById(cuMenuItemReq.getMenuItemCategoryId()).get();
+            MenuItem menuItem = new MenuItem(cuMenuItemReq.getMenuItemName(),menuItemCategory, MenuItemGroup.getFromValue(cuMenuItemReq.getMenuItemGroup()),
                     cuMenuItemReq.getDescription(),urlImage,false);
             menuItem = menuItemRepository.save(menuItem);
             return ResponseEntity.ok(modelMapper.map(menuItem, MenuItemSortView.class));
@@ -112,9 +112,9 @@ public class MenuItemService {
             String urlImage = getImageUrl(fileName);
             MenuItem menuItem = menuItemRepository.findById(cuMenuItemReq.getMenuItemId())
                     .orElseThrow(() -> new ResourceNotFoundException("Not found menu item"));
-            MenuItemCategory menuItemCategory = menuItemCategoryRepository.findById(cuMenuItemReq.getMenuItemId()).get();
+            MenuItemCategory menuItemCategory = menuItemCategoryRepository.findById(cuMenuItemReq.getMenuItemCategoryId()).get();
             menuItem.setMenuItemName(cuMenuItemReq.getMenuItemName());
-            menuItem.setMenuItemGroup(MenuItemGroup.valueOf(cuMenuItemReq.getMenuItemName()));
+            menuItem.setMenuItemGroup(MenuItemGroup.getFromValue(cuMenuItemReq.getMenuItemGroup()));
             menuItem.setMenuItemCategory(menuItemCategory);
             menuItem.setDescription(cuMenuItemReq.getDescription());
             menuItem.setActive(cuMenuItemReq.isActive());

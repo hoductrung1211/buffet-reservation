@@ -15,7 +15,7 @@ public class MenuItemController {
 
     private final MenuItemService menuItemService;
 
-    @PostMapping(value = "create",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "create",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> createMenuItem(@RequestPart(name = "image") MultipartFile image,
                                             @RequestPart(name = "data") CUMenuItemReq cuMenuItemReq){
         return menuItemService.createMenuItem(image,cuMenuItemReq);
