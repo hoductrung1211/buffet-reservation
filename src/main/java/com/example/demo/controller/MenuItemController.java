@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("api/menu-items")
 public class MenuItemController {
 
     private final MenuItemService menuItemService;
