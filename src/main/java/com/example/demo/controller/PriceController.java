@@ -1,11 +1,15 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.price.CUPriceMenuItemReq;
+import com.example.demo.dto.price.CUPriceTicketReq;
 import com.example.demo.model.price.Price;
 import com.example.demo.service.PriceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -18,31 +22,65 @@ public class PriceController {
         this.priceService = priceService;
     }
 
-    @GetMapping
-    public List<Price> getAllPrices() {
-        return priceService.getAllPrices();
+    @GetMapping("menu-item/all-by-id")
+    public ResponseEntity<?> getByMenuItem(@RequestParam(name = "menuItemId") Integer menuItemId){
+        return priceService.getByMenuItem(menuItemId);
     }
 
-    @GetMapping("/{priceId}")
-    public ResponseEntity<Price> getPriceById(@PathVariable int priceId) {
-        return priceService.getPriceById(priceId)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @GetMapping("menu-item/all-by-date")
+    public ResponseEntity<?> getCurrentPriceOfAllMenuItemInDate(@RequestParam(name = "date") LocalDate date){
+        return priceService.getCurrentPriceOfAllMenuItemInDate(date);
     }
 
-    @PostMapping
-    public Price createPrice(@RequestBody Price price) {
-        return priceService.createPrice(price);
+    @PostMapping("menu-item/create")
+    public ResponseEntity<?> createPriceMenuItem(@RequestBody CUPriceMenuItemReq cuPriceMenuItemReq){
+        return priceService.createPriceMenuItem(cuPriceMenuItemReq);
     }
 
-    @PutMapping("/{priceId}")
-    public ResponseEntity<Price> updatePrice(@PathVariable int priceId, @RequestBody Price priceDetails) {
-        return ResponseEntity.ok(priceService.updatePrice(priceId, priceDetails));
+    @PutMapping("menu-item/update")
+    public ResponseEntity<?> updatePriceMenuItem(@RequestBody CUPriceMenuItemReq cuPriceMenuItemReq){
+        return priceService.updatePriceMenuItem(cuPriceMenuItemReq);
     }
 
-    @DeleteMapping("/{priceId}")
-    public ResponseEntity<Void> deletePrice(@PathVariable int priceId) {
-        priceService.deletePrice(priceId);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping("menu-item/delete")
+    public ResponseEntity<?> deletePriceMenuItem(@RequestParam(name = "id") Integer id){
+        return priceService.deletePriceMenuItem(id);
+    }
+
+    @PostMapping("ticket/create")
+    public ResponseEntity<?> createPriceTicket(@RequestBody CUPriceTicketReq cuPriceTicketReq){
+        return priceService.createPriceTicket(cuPriceTicketReq);
+    }
+
+    @PutMapping("ticket/update")
+    public ResponseEntity<?> updatePriceTicket(@RequestBody CUPriceTicketReq cuPriceTicketReq){
+        return priceService.updatePriceTicket(cuPriceTicketReq);
+    }
+
+    @DeleteMapping("ticket/delete")
+    public ResponseEntity<?> deletePriceTicket(@RequestParam(name = "id") Integer id){
+        return priceService.deletePriceTicket(id);
+    }
+
+    @GetMapping("ticket/by-date-group")
+    public ResponseEntity<?> getByDayGroup(@RequestParam(name = "groupId") Integer groupId){
+        return priceService.getByDayGroup(groupId);
+    }
+
+    @GetMapping("ticket/by-all")
+    public ResponseEntity<?> getAll(){
+        return priceService.getAll();
+    }
+
+    // view all price ticket for all day group
+    @GetMapping("ticket/by-date")
+    public ResponseEntity<?> getTicketByDate(@RequestParam(name = "date") LocalDate date){
+        return priceService.getTicketByDate(date);
+    }
+
+    // view price ticket in date regis
+    @GetMapping("ticket/by-date-regis")
+    public ResponseEntity<?> getTicketByDateRegis(@RequestParam(name = "date") LocalDate date){
+        return priceService.getTicketByDateRegis(date);
     }
 }

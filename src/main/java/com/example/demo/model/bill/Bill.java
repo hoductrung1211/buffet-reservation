@@ -7,8 +7,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(schema = "bill")
@@ -18,7 +20,7 @@ import java.math.BigDecimal;
 @Setter
 public class Bill {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int billId;
 
     @ManyToOne()
@@ -29,15 +31,14 @@ public class Bill {
     @JoinColumn(name = "table_history_id", nullable = false)
     private TableHistory tableHistory;
 
-    @ManyToOne()
-    @JoinColumn(name = "price_id", nullable = false)
-    private Price price;
-
-    private int vat;
+    private Double vat;
 
     private String note;
 
     private BigDecimal total;
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    private LocalDateTime createDateTime;
 
     @PrePersist
     @PreUpdate
@@ -45,5 +46,14 @@ public class Bill {
         if (this.total.compareTo(BigDecimal.ZERO) < 0) {
             throw new RuntimeException("Bill totals must be greater than zero");
         }
+    }
+
+    public Bill(Employee employee, TableHistory tableHistory, Double vat, String note, BigDecimal total) {
+        this.employee = employee;
+        this.tableHistory = tableHistory;
+        this.vat = vat;
+        this.note = note;
+        this.total = total;
+        this.createDateTime = LocalDateTime.now();
     }
 }

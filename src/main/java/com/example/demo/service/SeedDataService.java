@@ -4,15 +4,12 @@ import com.example.demo.model.auth.Account;
 import com.example.demo.model.auth.Customer;
 import com.example.demo.model.auth.Employee;
 import com.example.demo.model.auth.Role;
-import com.example.demo.model.bill.Bill;
 import com.example.demo.model.bill.TableHistory;
 import com.example.demo.model.bill.TableHistoryStatus;
 import com.example.demo.model.menu.MenuItem;
 import com.example.demo.model.menu.MenuItemCategory;
 import com.example.demo.model.menu.MenuItemGroup;
 import com.example.demo.model.price.DayGroup;
-import com.example.demo.model.price.DayGroupApplication;
-import com.example.demo.model.price.Price;
 import com.example.demo.model.reservation.Reservation;
 import com.example.demo.model.reservation.ReservationStatus;
 import com.example.demo.model.reservation.ReservationTimeFrame;
@@ -25,11 +22,10 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-import java.sql.Time;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 @Component
@@ -95,10 +91,10 @@ public class SeedDataService implements ApplicationRunner {
         seedReservations();
 
         // Bill
-        seedBills();
+//        seedBills();
 
         // Feedback
-        seedFeedbacks();
+//        seedFeedbacks();
     }
 
     /* Authentication */
@@ -196,12 +192,12 @@ public class SeedDataService implements ApplicationRunner {
     /* 2. Menu */
     public void seedMenuItems() {
         var menuItemCategories = Arrays.asList(
-                new MenuItemCategory(1, "Khai vị & Ăn kèm", null),
-                new MenuItemCategory(2, "Thịt", null),
-                new MenuItemCategory(3, "Cơm & Canh & Mỳ", null),
-                new MenuItemCategory(4, "Lẩu", null),
-                new MenuItemCategory(5, "Hải sản", null),
-                new MenuItemCategory(6, "Tráng miệng", null)
+                new MenuItemCategory("Khai vị & Ăn kèm", null),
+                new MenuItemCategory("Thịt", null),
+                new MenuItemCategory("Cơm & Canh & Mỳ", null),
+                new MenuItemCategory("Lẩu", null),
+                new MenuItemCategory("Hải sản", null),
+                new MenuItemCategory("Tráng miệng", null)
         );
 
         if (menuItemCategoryRepository.count() == 0) {
@@ -209,56 +205,56 @@ public class SeedDataService implements ApplicationRunner {
         }
 
         var menuItems = Arrays.asList(
-                new MenuItem(1, "Salad Cá hồi", menuItemCategories.get(0), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(2, "Salad mùa xuân", menuItemCategories.get(0), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(3, "Há cảo truyền thống Hàn Quốc", menuItemCategories.get(0), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(4, "Set kimbap (ALC)", menuItemCategories.get(0), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(5, "Toboki xào hải sản", menuItemCategories.get(0), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(6, "Bánh hải sản", menuItemCategories.get(0), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(7, "Nấm nướng", menuItemCategories.get(0), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(8, "Salad cá ngừ (ALC)", menuItemCategories.get(0), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(9, "Salad hoa quả", menuItemCategories.get(0), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(10, "Salad hành paro", menuItemCategories.get(0), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(11, "Dê quân cờ", menuItemCategories.get(1), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(12, "Dê nướng tảng", menuItemCategories.get(1), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(13, "Diềm bụng bò", menuItemCategories.get(1), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(14, "Sườn non bò", menuItemCategories.get(1), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(15, "Ba chỉ bò", menuItemCategories.get(1), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(16, "Gầu bò", menuItemCategories.get(1), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(17, "Sườn bò", menuItemCategories.get(1), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(18, "Thăn bò", menuItemCategories.get(1), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(19, "Thăn lưng bò", menuItemCategories.get(1), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(20, "Sườn heo", menuItemCategories.get(1), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(21, "Má heo", menuItemCategories.get(1), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(22, "Nạc vai heo", menuItemCategories.get(1), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(22, "Ba chi heo", menuItemCategories.get(1), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(23, "Mỳ tương đen", menuItemCategories.get(2), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(24, "Mỳ bò Hàn Quốc", menuItemCategories.get(2), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(25, "Miến xào", menuItemCategories.get(2), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(26, "Cơm rang kim chi", menuItemCategories.get(2), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(27, "Canh lòng bò", menuItemCategories.get(2), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(28, "Canh Naechang Chigae", menuItemCategories.get(2), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(29, "Canh rong biển thịt", menuItemCategories.get(2), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(30, "Canh kim chi", menuItemCategories.get(2), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(31, "Cơm Hàn Quốc", menuItemCategories.get(2), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(32, "Cơm bát đá nóng", menuItemCategories.get(2), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(34, "Lẩu dê", menuItemCategories.get(3), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(35, "Rau lẩu", menuItemCategories.get(3), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(36, "Lẩu kim chi", menuItemCategories.get(3), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(37, "Lẩu bull", menuItemCategories.get(3), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(38, "Miến Hàn Quốc", menuItemCategories.get(3), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(39, "Tôm nướng", menuItemCategories.get(4), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(40, "Cá hồi", menuItemCategories.get(4), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(41, "Cá chình Hàn Quốc", menuItemCategories.get(4), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(42, "Bào ngư", menuItemCategories.get(4), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(43, "Cá mút đá", menuItemCategories.get(4), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(44, "Kem Caramen Flan cake", menuItemCategories.get(5), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(45, "Mochi socola", menuItemCategories.get(5), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(46, "Mochi trà xanh", menuItemCategories.get(5), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(47, "Kem tươi vị sữa chua", menuItemCategories.get(5), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(48, "Kem tươi vị Kiwi", menuItemCategories.get(5), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(49, "Kem tươi vị Berries", menuItemCategories.get(5), MenuItemGroup.FOOD, null, null, null, true),
-                new MenuItem(50, "Kem tươi vị Yuzu (ALC)", menuItemCategories.get(5), MenuItemGroup.FOOD, null, null, null, true)
+                new MenuItem("Salad Cá hồi", menuItemCategories.get(0), MenuItemGroup.FOOD, null, null,  true),
+                new MenuItem("Salad mùa xuân", menuItemCategories.get(0), MenuItemGroup.FOOD, null, null, true),
+                new MenuItem("Há cảo truyền thống Hàn Quốc", menuItemCategories.get(0), MenuItemGroup.FOOD,  null, null, true),
+                new MenuItem("Set kimbap (ALC)", menuItemCategories.get(0), MenuItemGroup.FOOD, null, null,  true),
+                new MenuItem("Toboki xào hải sản", menuItemCategories.get(0), MenuItemGroup.FOOD, null,  null, true),
+                new MenuItem("Bánh hải sản", menuItemCategories.get(0), MenuItemGroup.FOOD, null, null,  true),
+                new MenuItem("Nấm nướng", menuItemCategories.get(0), MenuItemGroup.FOOD, null,  null, true),
+                new MenuItem("Salad cá ngừ (ALC)", menuItemCategories.get(0), MenuItemGroup.FOOD, null, null, true),
+                new MenuItem("Salad hoa quả", menuItemCategories.get(0), MenuItemGroup.FOOD, null, null, true),
+                new MenuItem("Salad hành paro", menuItemCategories.get(0), MenuItemGroup.FOOD, null, null, true),
+                new MenuItem("Dê quân cờ", menuItemCategories.get(1), MenuItemGroup.FOOD, null, null, true),
+                new MenuItem("Dê nướng tảng", menuItemCategories.get(1), MenuItemGroup.FOOD, null, null, true),
+                new MenuItem("Diềm bụng bò", menuItemCategories.get(1), MenuItemGroup.FOOD, null, null, true),
+                new MenuItem("Sườn non bò", menuItemCategories.get(1), MenuItemGroup.FOOD, null, null,  true),
+                new MenuItem("Ba chỉ bò", menuItemCategories.get(1), MenuItemGroup.FOOD, null, null, true),
+                new MenuItem("Gầu bò", menuItemCategories.get(1), MenuItemGroup.FOOD, null, null,  true),
+                new MenuItem("Sườn bò", menuItemCategories.get(1), MenuItemGroup.FOOD, null, null,  true),
+                new MenuItem("Thăn bò", menuItemCategories.get(1), MenuItemGroup.FOOD, null, null, true),
+                new MenuItem("Thăn lưng bò", menuItemCategories.get(1), MenuItemGroup.FOOD, null, null, true),
+                new MenuItem("Sườn heo", menuItemCategories.get(1), MenuItemGroup.FOOD, null,  null, true),
+                new MenuItem("Má heo", menuItemCategories.get(1), MenuItemGroup.FOOD, null,  null, true),
+                new MenuItem("Nạc vai heo", menuItemCategories.get(1), MenuItemGroup.FOOD, null,null, true),
+                new MenuItem("Ba chi heo", menuItemCategories.get(1), MenuItemGroup.FOOD ,null,null, true),
+                new MenuItem("Mỳ tương đen", menuItemCategories.get(2), MenuItemGroup.FOOD ,null, null, true),
+                new MenuItem("Mỳ bò Hàn Quốc", menuItemCategories.get(2), MenuItemGroup.FOOD ,null, null, true),
+                new MenuItem("Miến xào", menuItemCategories.get(2), MenuItemGroup.FOOD ,null, null, true),
+                new MenuItem("Cơm rang kim chi", menuItemCategories.get(2), MenuItemGroup.FOOD ,null, null, true),
+                new MenuItem("Canh lòng bò", menuItemCategories.get(2), MenuItemGroup.FOOD ,null, null, true),
+                new MenuItem("Canh Naechang Chigae", menuItemCategories.get(2), MenuItemGroup.FOOD ,null, null, true),
+                new MenuItem("Canh rong biển thịt", menuItemCategories.get(2), MenuItemGroup.FOOD, null, null, true),
+                new MenuItem("Canh kim chi", menuItemCategories.get(2), MenuItemGroup.FOOD, null, null, true),
+                new MenuItem("Cơm Hàn Quốc", menuItemCategories.get(2), MenuItemGroup.FOOD ,null, null, true),
+                new MenuItem("Cơm bát đá nóng", menuItemCategories.get(2), MenuItemGroup.FOOD ,null, null, true),
+                new MenuItem("Lẩu dê", menuItemCategories.get(3), MenuItemGroup.FOOD, null, null, true),
+                new MenuItem("Rau lẩu", menuItemCategories.get(3), MenuItemGroup.FOOD ,null, null, true),
+                new MenuItem("Lẩu kim chi", menuItemCategories.get(3), MenuItemGroup.FOOD, null, null, true),
+                new MenuItem("Lẩu bull", menuItemCategories.get(3), MenuItemGroup.FOOD ,null, null, true),
+                new MenuItem("Miến Hàn Quốc", menuItemCategories.get(3), MenuItemGroup.FOOD ,null, null, true),
+                new MenuItem("Tôm nướng", menuItemCategories.get(4), MenuItemGroup.FOOD ,null, null, true),
+                new MenuItem("Cá hồi", menuItemCategories.get(4), MenuItemGroup.FOOD ,null, null, true),
+                new MenuItem("Cá chình Hàn Quốc", menuItemCategories.get(4), MenuItemGroup.FOOD ,null, null, true),
+                new MenuItem("Bào ngư", menuItemCategories.get(4), MenuItemGroup.FOOD ,null, null, true),
+                new MenuItem("Cá mút đá", menuItemCategories.get(4), MenuItemGroup.FOOD ,null, null, true),
+                new MenuItem("Kem Caramen Flan cake", menuItemCategories.get(5), MenuItemGroup.FOOD ,null, null, true),
+                new MenuItem("Mochi socola", menuItemCategories.get(5), MenuItemGroup.FOOD ,null, null, true),
+                new MenuItem("Mochi trà xanh", menuItemCategories.get(5), MenuItemGroup.FOOD ,null, null, true),
+                new MenuItem("Kem tươi vị sữa chua", menuItemCategories.get(5), MenuItemGroup.FOOD ,null, null, true),
+                new MenuItem("Kem tươi vị Kiwi", menuItemCategories.get(5), MenuItemGroup.FOOD ,null, null, true),
+                new MenuItem("Kem tươi vị Berries", menuItemCategories.get(5), MenuItemGroup.FOOD, null, null, true),
+                new MenuItem("Kem tươi vị Yuzu (ALC)", menuItemCategories.get(5), MenuItemGroup.FOOD ,null, null, true)
         );
 
         if (menuItemRepository.count() == 0) {
@@ -277,30 +273,30 @@ public class SeedDataService implements ApplicationRunner {
         if (dayGroupRepository.count() == 0) {
             dayGroupRepository.saveAll(dayGroups);
         }
-
-        var dayGroupApplications = Arrays.asList(
-                new DayGroupApplication(1, dayGroups.get(0), new Date(), 1),
-                new DayGroupApplication(2, dayGroups.get(0), new Date(), 2),
-                new DayGroupApplication(3, dayGroups.get(0), new Date(), 3),
-                new DayGroupApplication(4, dayGroups.get(0), new Date(), 4),
-                new DayGroupApplication(5, dayGroups.get(0), new Date(), 5),
-                new DayGroupApplication(6, dayGroups.get(1), new Date(), 6),
-                new DayGroupApplication(7, dayGroups.get(1), new Date(), 7)
-        );
-
-        if (dayGroupApplicationRepository.count() == 0) {
-            dayGroupApplicationRepository.saveAll(dayGroupApplications);
-        }
-
-        // Tạo Price
-        if (priceRepository.count() == 0) {
-            var prices = Arrays.asList(
-                    new Price(dayGroups.get(0), new BigDecimal("150000"), new BigDecimal("100000")),
-                    new Price(dayGroups.get(1), new BigDecimal("200000"), new BigDecimal("150000")),
-                    new Price(dayGroups.get(2), new BigDecimal("220000"), new BigDecimal("170000"))
-            );
-            priceRepository.saveAll(prices);
-        }
+//
+//        var dayGroupApplications = Arrays.asList(
+//                new DayGroupApplication(1, dayGroups.get(0), new Date(), 1),
+//                new DayGroupApplication(2, dayGroups.get(0), new Date(), 2),
+//                new DayGroupApplication(3, dayGroups.get(0), new Date(), 3),
+//                new DayGroupApplication(4, dayGroups.get(0), new Date(), 4),
+//                new DayGroupApplication(5, dayGroups.get(0), new Date(), 5),
+//                new DayGroupApplication(6, dayGroups.get(1), new Date(), 6),
+//                new DayGroupApplication(7, dayGroups.get(1), new Date(), 7)
+//        );
+//
+//        if (dayGroupApplicationRepository.count() == 0) {
+//            dayGroupApplicationRepository.saveAll(dayGroupApplications);
+//        }
+//
+//        // Tạo Price
+//        if (priceRepository.count() == 0) {
+//            var prices = Arrays.asList(
+//                    new Price(dayGroups.get(0), new BigDecimal("150000"), new BigDecimal("100000")),
+//                    new Price(dayGroups.get(1), new BigDecimal("200000"), new BigDecimal("150000")),
+//                    new Price(dayGroups.get(2), new BigDecimal("220000"), new BigDecimal("170000"))
+//            );
+//            priceRepository.saveAll(prices);
+//        }
     }
 
     /* 4. Table */
@@ -343,32 +339,32 @@ public class SeedDataService implements ApplicationRunner {
     /* 5. Reservation */
     public void seedReservations() {
         var reservationTimeFrames = Arrays.asList(
-                new ReservationTimeFrame(1, "Khung 10h - 12h", new Time(36000000), new Time(43200000), true),
-                new ReservationTimeFrame(2, "Khung 12h - 14h", new Time(43200000), new Time(50400000), true),
-                new ReservationTimeFrame(3, "Khung 14h - 16h", new Time(50400000), new Time(57600000), true),
-                new ReservationTimeFrame(4, "Khung 16h - 18h", new Time(57600000), new Time(64800000), true),
-                new ReservationTimeFrame(5, "Khung 18h - 20h", new Time(64800000), new Time(72000000), true),
-                new ReservationTimeFrame(6, "Khung 20h - 22h", new Time(72000000), new Time(79200000), true)
+                new ReservationTimeFrame( "Khung 10h - 12h", LocalTime.of(10,0), LocalTime.of(12,0), true),
+                new ReservationTimeFrame( "Khung 12h - 14h", LocalTime.of(12,0), LocalTime.of(14,0), true),
+                new ReservationTimeFrame( "Khung 14h - 16h", LocalTime.of(14,0), LocalTime.of(16,0), true),
+                new ReservationTimeFrame("Khung 16h - 18h", LocalTime.of(16,0), LocalTime.of(18,0), true),
+                new ReservationTimeFrame( "Khung 18h - 20h", LocalTime.of(18,0), LocalTime.of(20,0), true),
+                new ReservationTimeFrame( "Khung 20h - 22h", LocalTime.of(20,0), LocalTime.of(22,0), true)
         );
 
         if (resTimeFrameRepository.count() == 0) {
             resTimeFrameRepository.saveAll(reservationTimeFrames);
         }
 
-        if (reservationRepository.count() == 0) {
-            var customers = customerRepository.findAll();
-
-            var reservations = Arrays.asList(
-                    new Reservation(1, customers.get(0), reservationTimeFrames.get(0), DateUtil.parseDate("2024-07-23"), 2, 0, "", LocalDateTime.now(), ReservationStatus.INIT),
-                    new Reservation(2, customers.get(1), reservationTimeFrames.get(1), DateUtil.parseDate("2024-07-23"), 3, 0, "", LocalDateTime.now(), ReservationStatus.INIT),
-                    new Reservation(3, customers.get(2), reservationTimeFrames.get(2), DateUtil.parseDate("2024-07-23"), 4, 0, "", LocalDateTime.now(), ReservationStatus.INIT),
-                    new Reservation(4, customers.get(3), reservationTimeFrames.get(3), DateUtil.parseDate("2024-07-23"), 2, 1, "", LocalDateTime.now(), ReservationStatus.INIT),
-                    new Reservation(5, customers.get(4), reservationTimeFrames.get(4), DateUtil.parseDate("2024-07-23"), 3, 0, "", LocalDateTime.now(), ReservationStatus.INIT),
-                    new Reservation(6, customers.get(5), reservationTimeFrames.get(5), DateUtil.parseDate("2024-07-23"), 4, 0, "", LocalDateTime.now(), ReservationStatus.INIT)
-            );
-
-            reservationRepository.saveAll(reservations);
-        }
+//        if (reservationRepository.count() == 0) {
+//            var customers = customerRepository.findAll();
+//
+//            var reservations = Arrays.asList(
+//                    new Reservation( 1,customers.get(0), reservationTimeFrames.get(0), LocalDate.parse("2024-07-23"), 2, 0,"", ReservationStatus.INIT),
+//                    new Reservation( 2,customers.get(1), reservationTimeFrames.get(1), LocalDate.parse("2024-07-23"), 3, 0,"", ReservationStatus.INIT),
+//                    new Reservation( 3,customers.get(2), reservationTimeFrames.get(2), LocalDate.parse("2024-07-23"), 4, 0,"", ReservationStatus.INIT),
+//                    new Reservation( 4,customers.get(3), reservationTimeFrames.get(3), LocalDate.parse("2024-07-23"), 2, 1,"", ReservationStatus.INIT),
+//                    new Reservation( 5,customers.get(4), reservationTimeFrames.get(4), LocalDate.parse("2024-07-23"), 3, 0,"", ReservationStatus.INIT),
+//                    new Reservation( 6,customers.get(5), reservationTimeFrames.get(5), LocalDate.parse("2024-07-23"), 4, 0,"", ReservationStatus.INIT)
+//            );
+//
+//            reservationRepository.saveAll(reservations);
+//        }
     }
 
     /* 6. Bill */
@@ -377,30 +373,30 @@ public class SeedDataService implements ApplicationRunner {
             var tables = buffetTableRepository.findAll();
             var reservations = reservationRepository.findAll();
 
-            var tableHistories = Arrays.asList(
-                    new TableHistory(1, tables.get(0), reservations.get(0), LocalDateTime.of(2024, 7, 23, 10, 10), LocalDateTime.of(2024, 7, 23, 11, 30), 2, 0, TableHistoryStatus.FINISHED),
-                    new TableHistory(2, tables.get(1), reservations.get(1), LocalDateTime.of(2024, 7, 23, 12, 11), LocalDateTime.of(2024, 7, 23, 13, 45), 2, 0, TableHistoryStatus.FINISHED),
-                    new TableHistory(3, tables.get(2), reservations.get(2), LocalDateTime.of(2024, 7, 23, 14, 31), LocalDateTime.of(2024, 7, 23, 15, 30), 2, 0, TableHistoryStatus.FINISHED),
-                    new TableHistory(4, tables.get(3), reservations.get(3), LocalDateTime.of(2024, 7, 23, 16, 20), LocalDateTime.of(2024, 7, 23, 17, 44), 2, 0, TableHistoryStatus.FINISHED),
-                    new TableHistory(5, tables.get(4), reservations.get(4), LocalDateTime.of(2024, 7, 23, 18, 11), LocalDateTime.of(2024, 7, 23, 19, 55), 2, 0, TableHistoryStatus.FINISHED),
-                    new TableHistory(6, tables.get(5), reservations.get(4), LocalDateTime.of(2024, 7, 23, 20, 9), LocalDateTime.of(2024, 7, 23, 21, 50), 2, 0, TableHistoryStatus.FINISHED)
-            );
+//            var tableHistories = Arrays.asList(
+//                    new TableHistory(1, tables.get(0), reservations.get(0), LocalDateTime.of(2024, 7, 23, 10, 10), LocalDateTime.of(2024, 7, 23, 11, 30), 2, 0, TableHistoryStatus.FINISHED),
+//                    new TableHistory(2, tables.get(1), reservations.get(1), LocalDateTime.of(2024, 7, 23, 12, 11), LocalDateTime.of(2024, 7, 23, 13, 45), 2, 0, TableHistoryStatus.FINISHED),
+//                    new TableHistory(3, tables.get(2), reservations.get(2), LocalDateTime.of(2024, 7, 23, 14, 31), LocalDateTime.of(2024, 7, 23, 15, 30), 2, 0, TableHistoryStatus.FINISHED),
+//                    new TableHistory(4, tables.get(3), reservations.get(3), LocalDateTime.of(2024, 7, 23, 16, 20), LocalDateTime.of(2024, 7, 23, 17, 44), 2, 0, TableHistoryStatus.FINISHED),
+//                    new TableHistory(5, tables.get(4), reservations.get(4), LocalDateTime.of(2024, 7, 23, 18, 11), LocalDateTime.of(2024, 7, 23, 19, 55), 2, 0, TableHistoryStatus.FINISHED),
+//                    new TableHistory(6, tables.get(5), reservations.get(5), LocalDateTime.of(2024, 7, 23, 20, 9), LocalDateTime.of(2024, 7, 23, 21, 50), 2, 0, TableHistoryStatus.FINISHED)
+//            );
+//
+//            tableHistoryRepository.saveAll(tableHistories);
 
-            tableHistoryRepository.saveAll(tableHistories);
+//            var employees = employeeRepository.findAll();
+//            var prices = priceRepository.findAll();
 
-            var employees = employeeRepository.findAll();
-            var prices = priceRepository.findAll();
-
-            var bills = Arrays.asList(
-                    new Bill(1, employees.get(0), tableHistories.get(0), prices.get(0), 0, "", new BigDecimal("300000")),
-                    new Bill(2, employees.get(0), tableHistories.get(1), prices.get(0), 0, "", new BigDecimal("450000")),
-                    new Bill(3, employees.get(1), tableHistories.get(2), prices.get(0), 0, "", new BigDecimal("600000")),
-                    new Bill(4, employees.get(1), tableHistories.get(3), prices.get(0), 0, "", new BigDecimal("400000")),
-                    new Bill(5, employees.get(2), tableHistories.get(4), prices.get(0), 0, "", new BigDecimal("450000")),
-                    new Bill(6, employees.get(2), tableHistories.get(5), prices.get(0), 0, "", new BigDecimal("600000"))
-            );
-
-            billRepository.saveAll(bills);
+//            var bills = Arrays.asList(
+//                    new Bill(1, employees.get(0), tableHistories.get(0), prices.get(0), 0, "", new BigDecimal("300000")),
+//                    new Bill(2, employees.get(0), tableHistories.get(1), prices.get(0), 0, "", new BigDecimal("450000")),
+//                    new Bill(3, employees.get(1), tableHistories.get(2), prices.get(0), 0, "", new BigDecimal("600000")),
+//                    new Bill(4, employees.get(1), tableHistories.get(3), prices.get(0), 0, "", new BigDecimal("400000")),
+//                    new Bill(5, employees.get(2), tableHistories.get(4), prices.get(0), 0, "", new BigDecimal("450000")),
+//                    new Bill(6, employees.get(2), tableHistories.get(5), prices.get(0), 0, "", new BigDecimal("600000"))
+//            );
+//
+//            billRepository.saveAll(bills);
         }
     }
 

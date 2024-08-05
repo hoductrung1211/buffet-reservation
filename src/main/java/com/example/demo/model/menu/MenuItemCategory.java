@@ -16,7 +16,7 @@ import java.util.List;
 @Setter
 public class MenuItemCategory {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int menuItemCategoryId;
 
     @Column(nullable = false)
@@ -32,8 +32,7 @@ public class MenuItemCategory {
     @OneToMany(mappedBy = "menuItemCategory", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MenuItem> menuItems;
 
-    public MenuItemCategory(int menuItemCategoryId, String menuItemCategoryName, MenuItemCategory supMenuItemCategory) {
-        this.menuItemCategoryId = menuItemCategoryId;
+    public MenuItemCategory(String menuItemCategoryName, MenuItemCategory supMenuItemCategory) {
         this.menuItemCategoryName = menuItemCategoryName;
         this.supMenuItemCategory = supMenuItemCategory;
     }

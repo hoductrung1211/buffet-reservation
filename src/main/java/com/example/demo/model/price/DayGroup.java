@@ -1,5 +1,6 @@
 package com.example.demo.model.price;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -16,18 +17,15 @@ import java.util.List;
 @Builder
 public class DayGroup {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int dateGroupId;
 
-    @Column(nullable = false)
+    @Column(nullable = false,unique = true)
     private String dayGroupName;
 
     private boolean isActive = true;
 
-    @OneToMany(mappedBy = "dayGroup", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<DayGroupApplication> dayGroupApplications = new ArrayList<>();
-
+    @JsonIgnore
     @OneToMany(mappedBy = "dayGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Price> prices = new ArrayList<>();
 

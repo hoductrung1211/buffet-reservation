@@ -11,14 +11,14 @@ public class TableHistoryMenuItemId implements Serializable {
     @Column(name = "table_history_id")
     private int tableHistoryId;
 
-    @Column(name = "menu_item_id")
-    private int menuItemId;
+    @Column(name = "price_menu_item_id")
+    private int priceMenuItemId;
 
     public TableHistoryMenuItemId() {}
 
-    public TableHistoryMenuItemId(int tableHistoryId, int menuItemId) {
+    public TableHistoryMenuItemId(int tableHistoryId, int priceMenuItemId) {
         this.tableHistoryId = tableHistoryId;
-        this.menuItemId = menuItemId;
+        this.priceMenuItemId = priceMenuItemId;
     }
 
     // hashCode and equals methods
@@ -28,11 +28,11 @@ public class TableHistoryMenuItemId implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         TableHistoryMenuItemId that = (TableHistoryMenuItemId) o;
         return tableHistoryId == that.tableHistoryId &&
-                menuItemId == that.menuItemId;
+                priceMenuItemId == that.priceMenuItemId;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(tableHistoryId, menuItemId);
+        return Objects.hash(tableHistoryId, priceMenuItemId);
     }
 }
