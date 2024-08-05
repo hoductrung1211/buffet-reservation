@@ -5,8 +5,9 @@ import lombok.Getter;
 @Getter
 public enum TableHistoryStatus {
     RESERVED(1),
-    CANCELED(2),
-    FINISHED(3);
+    SERVING(2),
+    CANCELED(3),
+    FINISHED(4);
 
     private final int value;
 

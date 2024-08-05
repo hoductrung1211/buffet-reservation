@@ -13,7 +13,7 @@ import lombok.*;
 @Builder
 public class BuffetTable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int buffetTableId;
 
     @Column(nullable = false, unique = true)

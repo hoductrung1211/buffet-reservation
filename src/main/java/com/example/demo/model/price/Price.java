@@ -6,23 +6,24 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
-@Table(schema = "price")
+@Table(schema = "price",uniqueConstraints = @UniqueConstraint(columnNames = {"day_group_id","application_date"}))
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 public class Price {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int priceId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "day_group_id", nullable = false)
-    @JsonBackReference
     private DayGroup dayGroup;
 
     @Column(nullable = false)
@@ -30,6 +31,9 @@ public class Price {
 
     @Column(nullable = false)
     private BigDecimal childPrice;
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate applicationDate;
 
     // Constructor với tham số
     public Price(DayGroup dayGroup, BigDecimal adultPrice, BigDecimal childPrice) {

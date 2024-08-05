@@ -19,7 +19,7 @@ import java.util.List;
 @Setter
 public class MenuItem {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int menuItemId;
 
     @Column(nullable = false)
@@ -37,30 +37,17 @@ public class MenuItem {
 
     private String imageUrl;
 
-    private BigDecimal price;
-
     private boolean isActive = true;
 
-    @OneToMany(mappedBy = "menuItem", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TableHistoryMenuItem> tableHistories;
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "menuItem",cascade = CascadeType.ALL)
+    private List<PriceMenuItem> priceMenuItemList;
 
-    public MenuItem(
-            int menuItemId,
-            String menuItemName,
-            MenuItemCategory menuItemCategory,
-            MenuItemGroup menuItemGroup,
-            String description,
-            String imageUrl,
-            BigDecimal price,
-            boolean isActive
-    ) {
-        this.menuItemId = menuItemId;
+    public MenuItem(String menuItemName, MenuItemCategory menuItemCategory, MenuItemGroup menuItemGroup, String description, String imageUrl, boolean isActive) {
         this.menuItemName = menuItemName;
         this.menuItemCategory = menuItemCategory;
         this.menuItemGroup = menuItemGroup;
         this.description = description;
         this.imageUrl = imageUrl;
-        this.price = price;
         this.isActive = isActive;
     }
 }

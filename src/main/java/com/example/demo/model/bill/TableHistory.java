@@ -1,6 +1,8 @@
 package com.example.demo.model.bill;
 
 import com.example.demo.converter.TableHistoryStatusConverter;
+import com.example.demo.model.auth.Employee;
+import com.example.demo.model.price.Price;
 import com.example.demo.model.reservation.Reservation;
 import com.example.demo.model.table.BuffetTable;
 import jakarta.persistence.*;
@@ -20,16 +22,20 @@ import java.util.List;
 @Setter
 public class TableHistory {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int tableHistoryId;
 
     @ManyToOne()
     @JoinColumn(name = "buffet_table_id")
     private BuffetTable buffetTable;
 
-    @ManyToOne()
+    @OneToOne()
     @JoinColumn(name = "reservation_id")
     private Reservation reservation;
+
+    @ManyToOne()
+    @JoinColumn(name = "price_id", nullable = false)
+    private Price price;
 
     private LocalDateTime startDateTime;
 
@@ -44,6 +50,10 @@ public class TableHistory {
 
     @OneToMany(mappedBy = "tableHistory", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TableHistoryMenuItem> menuItems;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee_id")
+    private Employee employee;
 
     public TableHistory(
             int tableHistoryId,

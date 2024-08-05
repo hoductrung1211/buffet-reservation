@@ -63,7 +63,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(req ->
                         req.requestMatchers(WHITE_LIST_URL)
                                 .permitAll()
-                                .requestMatchers("api/commons-roles/**").hasAnyAuthority("student","AcademicAdvisor","lecturer","TQA","StudentAffairs")
+                                .requestMatchers("api/feedbacks/**").hasAnyAuthority("CUSTOMER","MANAGER","EMPLOYEE")
                                 .requestMatchers("api/behaviors/**").hasAnyAuthority("AcademicAdvisor","lecturer","StudentAffairs")
                                 .requestMatchers("api/scores/**").hasAnyAuthority("AcademicAdvisor","lecturer","TQA")
                                 .requestMatchers("api/exam-plan/**").hasAnyAuthority("AcademicAdvisor","lecturer","TQA")

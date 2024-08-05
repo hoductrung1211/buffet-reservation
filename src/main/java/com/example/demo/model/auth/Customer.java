@@ -1,6 +1,8 @@
 package com.example.demo.model.auth;
 
 import com.example.demo.model.reservation.Reservation;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +19,7 @@ import java.util.List;
 @Setter
 public class Customer {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int customerId;
 
     @Column(nullable = false)
@@ -34,6 +36,7 @@ public class Customer {
 
     private String email;
 
+    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "accountId")
     private Account account;
@@ -55,6 +58,7 @@ public class Customer {
         this.account = account;
     }
 
+    @JsonIgnore
     @OneToMany(mappedBy = "customer")
     private List<Reservation> reservations = new ArrayList<>();
 }

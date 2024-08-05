@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.model.price.DayGroupApplication;
+import com.example.demo.model.price.Holiday;
 import com.example.demo.repository.IDayGroupApplicationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,16 +17,16 @@ public class DayGroupApplicationService {
         this.applicationRepository = applicationRepository;
     }
 
-    public List<DayGroupApplication> findAll() {
+    public List<Holiday> findAll() {
         return applicationRepository.findAll();
     }
 
-    public Optional<DayGroupApplication> findById(int dayGroupApplicationId) {
+    public Optional<Holiday> findById(int dayGroupApplicationId) {
         return applicationRepository.findById(dayGroupApplicationId);
     }
 
-    public DayGroupApplication save(DayGroupApplication dayGroupApplication) {
-        return applicationRepository.save(dayGroupApplication);
+    public Holiday save(Holiday holiday) {
+        return applicationRepository.save(holiday);
     }
 
     public void deleteById(int dayGroupApplicationId) {

@@ -16,7 +16,7 @@ import java.util.List;
 @Builder
 public class TableGroup {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int tableGroupId;
 
     @Column(nullable = false, unique = true)

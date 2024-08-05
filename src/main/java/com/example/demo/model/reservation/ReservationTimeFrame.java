@@ -1,5 +1,6 @@
 package com.example.demo.model.reservation;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Time;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,25 +20,25 @@ import java.util.List;
 @Setter
 public class ReservationTimeFrame {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int reservationTimeFrameId;
 
     @Column(nullable = false, unique = true)
     private String reservationTimeFrameName;
 
     @Column(nullable = false)
-    private Time startTime;
+    private LocalTime startTime;
 
     @Column(nullable = false)
-    private Time endTime;
+    private LocalTime endTime;
 
     private boolean isActive = true;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "reservationTimeFrame")
     private List<Reservation> reservations = new ArrayList<>();
 
-    public ReservationTimeFrame(int reservationTimeFrameId, String reservationTimeFrameName, Time startTime, Time endTime, boolean isActive) {
-        this.reservationTimeFrameId = reservationTimeFrameId;
+    public ReservationTimeFrame(String reservationTimeFrameName, LocalTime startTime, LocalTime endTime, boolean isActive) {
         this.reservationTimeFrameName = reservationTimeFrameName;
         this.startTime = startTime;
         this.endTime = endTime;
