@@ -94,7 +94,7 @@ public class ReservationService {
             tableHistoryRepository.save(tableHistory);
             ReservationView reservationView = modelMapper.map(reservation,ReservationView.class);
             reservationView.setTableName(tableHistory.getBuffetTable().getBuffetTableName());
-            return ResponseEntity.ok(reservation);
+            return ResponseEntity.ok(reservationView);
         }catch (Exception e){
             return ResponseEntity.badRequest().body("Reservation is failed!");
         }
