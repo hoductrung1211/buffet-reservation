@@ -45,7 +45,7 @@ public class Reservation {
 
     private LocalDateTime createdDatetime;
 
-    @Convert(converter = ReservationStatusConverter.class)
+    @Enumerated(EnumType.STRING)
     private ReservationStatus status;
 
     @OneToOne(mappedBy = "reservation")

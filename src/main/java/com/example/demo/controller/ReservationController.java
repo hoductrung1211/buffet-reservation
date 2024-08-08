@@ -29,8 +29,13 @@ public class ReservationController {
 
     @PreAuthorize("hasAuthority('CUSTOMER')")
     @GetMapping("by-date")
-    public ResponseEntity<?> getReservationByDate(@RequestParam("date") LocalDate date){
+    public ResponseEntity<?> getReservationByDate(@RequestParam(value = "date",required = false) LocalDate date){
         return reservationService.getReservationByDate(date);
+    }
+
+    @GetMapping("detail")
+    public ResponseEntity<?> getReservationDetail(@RequestParam(value = "id") Integer id){
+        return reservationService.getReservationDetail(id);
     }
 
     @PreAuthorize("hasAuthority('CUSTOMER')")
@@ -48,5 +53,11 @@ public class ReservationController {
     @PutMapping("cancel")
     public ResponseEntity<?> cancelReservation(@RequestParam Integer reservationId){
         return reservationService.cancelReservation(reservationId);
+    }
+
+    @GetMapping("by-check-in")
+    public ResponseEntity<?> getReservationCheckIn(@RequestParam(name = "phone",required = false) String phone,
+                                                  @RequestParam(value = "date") LocalDate date){
+        return reservationService.getReservationCheckIn(phone,date);
     }
 }

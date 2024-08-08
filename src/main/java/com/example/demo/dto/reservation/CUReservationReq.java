@@ -15,4 +15,5 @@ public class CUReservationReq {
     private Integer adultsQuantity;
     private Integer childrenQuantity;
     private String note;
+    private String status;
 }

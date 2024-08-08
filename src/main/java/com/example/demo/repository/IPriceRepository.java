@@ -17,13 +17,14 @@ public interface IPriceRepository extends JpaRepository<Price, Integer> {
             "WHERE p.applicationDate = (SELECT MAX(p2.applicationDate) " +
             "FROM Price p2 " +
             "WHERE p2.applicationDate <= :date " +
-            "AND p2.dayGroup = p.dayGroup)")
+            "AND p2.dayGroup = p.dayGroup) ")
     List<Price> findPricesByDate(@Param("date") LocalDate date);
     @Query("SELECT p FROM Price p " +
             "WHERE p.applicationDate = (SELECT MAX(p2.applicationDate) " +
             "FROM Price p2 " +
             "WHERE p2.applicationDate <= :date " +
-            "AND p2.dayGroup.dateGroupId = :dateGroupId)")
+            "AND p2.dayGroup.dateGroupId = :dateGroupId) " +
+            "AND p.dayGroup.dateGroupId = :dateGroupId")
     Price findByDateGroupId(@Param("date") LocalDate date,
                             @Param("dateGroupId") Integer dateGroupId);
 

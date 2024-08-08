@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -17,17 +18,16 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Setter
-public class TableHistoryMenuItem {
-    @EmbeddedId
-    private TableHistoryMenuItemId id;
+@IdClass(TableHistoryMenuItemId.class)
+public class TableHistoryMenuItem implements Serializable {
 
+    @Id
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @MapsId("tableHistoryId")
     @JoinColumn(name = "table_history_id", nullable = false)
     private TableHistory tableHistory;
 
+    @Id
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @MapsId("priceMenuItemId")
     @JoinColumn(name = "price_menu_item_id", nullable = false)
     private PriceMenuItem priceMenuItem;
 

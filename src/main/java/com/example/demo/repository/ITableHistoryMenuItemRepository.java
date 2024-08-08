@@ -5,9 +5,12 @@ import com.example.demo.model.bill.TableHistoryMenuItemId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 
+@Repository
 public interface ITableHistoryMenuItemRepository extends JpaRepository<TableHistoryMenuItem, TableHistoryMenuItemId> {
     @Query("SELECT CASE WHEN COUNT(thm) > 0 THEN FALSE ELSE TRUE END " +
             "FROM TableHistoryMenuItem thm WHERE thm.priceMenuItem.menuItem.menuItemId = :menuItemId")
@@ -15,7 +18,7 @@ public interface ITableHistoryMenuItemRepository extends JpaRepository<TableHist
 
     @Query("SELECT CASE WHEN COUNT(thm) > 0 THEN FALSE ELSE TRUE END " +
             "FROM TableHistoryMenuItem thm " +
-            "WHERE thm.tableHistory.tableHistoryStatus = 2 " +
+            "WHERE thm.tableHistory.tableHistoryStatus = 'SERVING' " +
             "AND thm.priceMenuItem.menuItem.menuItemId = :menuItemId " +
             "AND FUNCTION('DATE', thm.createDateTime) = :date")
     boolean isHasTableOrderOnDate(@Param("menuItemId") Integer menuItemId,
@@ -28,4 +31,6 @@ public interface ITableHistoryMenuItemRepository extends JpaRepository<TableHist
 
     TableHistoryMenuItem findByHisAndPrice(@Param("tableHistoryId") Integer tableHistoryId,
                                            @Param("priceMenuItemId") Integer priceMenuItemId);
+
+    List<TableHistoryMenuItem> findAllByTableHistory_TableHistoryId(Integer id);
 }

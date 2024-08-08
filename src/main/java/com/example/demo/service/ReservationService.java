@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.price.PriceView;
 import com.example.demo.dto.reservation.CUReservationReq;
 import com.example.demo.dto.reservation.ReservationView;
 import com.example.demo.exception.ResourceNotFoundException;
@@ -34,9 +35,10 @@ public class ReservationService {
     private final ContextHolderService contextHolderService;
     private final ModelMapper modelMapper;
     private final PriceService priceService;
+    private final ICustomerRepository customerRepository;
 
     @Autowired
-    public ReservationService(IReservationRepository reservationRepository, IReservationTimeFrameRepository reservationTimeFrameRepository, ITableHistoryRepository tableHistoryRepository, IBuffetTableRepository buffetTableRepository, ContextHolderService contextHolderService, ModelMapper modelMapper, PriceService priceService) {
+    public ReservationService(IReservationRepository reservationRepository, IReservationTimeFrameRepository reservationTimeFrameRepository, ITableHistoryRepository tableHistoryRepository, IBuffetTableRepository buffetTableRepository, ContextHolderService contextHolderService, ModelMapper modelMapper, PriceService priceService, ICustomerRepository customerRepository) {
         this.reservationRepository = reservationRepository;
         this.reservationTimeFrameRepository = reservationTimeFrameRepository;
         this.tableHistoryRepository = tableHistoryRepository;
@@ -44,6 +46,7 @@ public class ReservationService {
         this.contextHolderService = contextHolderService;
         this.modelMapper = modelMapper;
         this.priceService = priceService;
+        this.customerRepository = customerRepository;
     }
 
     @Transactional
@@ -93,6 +96,7 @@ public class ReservationService {
             reservationRepository.flush();
             tableHistoryRepository.save(tableHistory);
             ReservationView reservationView = modelMapper.map(reservation,ReservationView.class);
+            reservationView.setPrice(modelMapper.map(reservation.getTableHistory().getPrice(), PriceView.class));
             reservationView.setTableName(tableHistory.getBuffetTable().getBuffetTableName());
             return ResponseEntity.ok(reservationView);
         }catch (Exception e){
@@ -126,33 +130,39 @@ public class ReservationService {
             reservation.setReservationTimeFrame(reservationTimeFrame);
         }
         // check slot
-        List<BuffetTable> buffetTables = buffetTableRepository.findAllByQuantity(cuReservationReq.getAdultsQuantity()+cuReservationReq.getChildrenQuantity());
         TableHistory tableHistory = tableHistoryRepository.findByReservation_ReservationId(reservation.getReservationId());
-        for (BuffetTable buffetTable : buffetTables){
-            if(tableHistoryRepository.isHasSlotOnline(cuReservationReq.getDateRegis(),cuReservationReq.getReservationTimeFrameId(),buffetTable.getBuffetTableId())){
-                tableHistory.setBuffetTable(buffetTable);
-                break;
+        boolean isOldTotalQuantity = (cuReservationReq.getAdultsQuantity()+cuReservationReq.getChildrenQuantity()) == (reservation.getChildrenQuantity()+reservation.getAdultsQuantity());
+        if(!cuReservationReq.getDateRegis().isEqual(reservation.getDate()) || !cuReservationReq.getReservationTimeFrameId().equals(reservation.getReservationTimeFrame().getReservationTimeFrameId())
+        || !isOldTotalQuantity){
+            List<BuffetTable> buffetTables = buffetTableRepository.findAllByQuantity(cuReservationReq.getAdultsQuantity()+cuReservationReq.getChildrenQuantity());
+            for (BuffetTable buffetTable : buffetTables){
+                if(tableHistoryRepository.isHasSlotOnline(cuReservationReq.getDateRegis(),cuReservationReq.getReservationTimeFrameId(),buffetTable.getBuffetTableId())){
+                    tableHistory.setBuffetTable(buffetTable);
+                    break;
+                }
             }
-        }
-        if(tableHistory.getBuffetTable() == null)
-            return ResponseEntity.badRequest().body("No table found for the required number of people");
+            if(tableHistory.getBuffetTable() == null)
+                return ResponseEntity.badRequest().body("No table found for the required number of people");
 
-        Price price = priceService.getPriceTicketToDate(curDate);
-        if(price == null)
-            return ResponseEntity.badRequest().body("No price found for date regis");
-        tableHistory.setPrice(price);
+            Price price = priceService.getPriceTicketToDate(curDate);
+            if(price == null)
+                return ResponseEntity.badRequest().body("No price found for date regis");
+            tableHistory.setPrice(price);
+        }
 
         Customer customer = (Customer) contextHolderService.getObjectFromContext();
         if(reservation.getCustomer().getCustomerId() != customer.getCustomerId())
             return ResponseEntity.badRequest().body("error customer");
-
+        ReservationStatus.valueOf(cuReservationReq.getStatus());
+        reservation.setStatus(ReservationStatus.valueOf(cuReservationReq.getStatus()));
         try {
             reservation = reservationRepository.save(reservation);
             reservationRepository.flush();
             tableHistoryRepository.save(tableHistory);
             ReservationView reservationView = modelMapper.map(reservation,ReservationView.class);
             reservationView.setTableName(tableHistory.getBuffetTable().getBuffetTableName());
-            return ResponseEntity.ok(reservation);
+            reservationView.setPrice(modelMapper.map(reservation.getTableHistory().getPrice(), PriceView.class));
+            return ResponseEntity.ok(reservationView);
         }catch (Exception e){
             return ResponseEntity.badRequest().body("Reservation is failed!");
         }
@@ -191,6 +201,7 @@ public class ReservationService {
                 .stream().map(reservation -> {
                     ReservationView reservationView = modelMapper.map(reservation,ReservationView.class);
                     reservationView.setTableName(reservation.getTableHistory().getBuffetTable().getBuffetTableName());
+                    reservationView.setPrice(modelMapper.map(reservation.getTableHistory().getPrice(), PriceView.class));
                     return reservationView;
                 })
                 .collect(Collectors.toList());
@@ -199,13 +210,62 @@ public class ReservationService {
 
     public ResponseEntity<?> getReservationByDate(LocalDate date) {
         Customer customer = (Customer) contextHolderService.getObjectFromContext();
-        List<ReservationView> reservationViews = reservationRepository.findAllByCustomer_CustomerIdAndDate(customer.getCustomerId(),date)
-                .stream().map(reservation -> {
-                    ReservationView reservationView = modelMapper.map(reservation,ReservationView.class);
-                    reservationView.setTableName(reservation.getTableHistory().getBuffetTable().getBuffetTableName());
-                    return reservationView;
-                })
-                .collect(Collectors.toList());
+        List<ReservationView> reservationViews;
+        if(date == null){
+            reservationViews = reservationRepository.findAllByCustomer_CustomerId(customer.getCustomerId())
+                    .stream().map(reservation -> {
+                        ReservationView reservationView = modelMapper.map(reservation,ReservationView.class);
+                        reservationView.setTableName(reservation.getTableHistory().getBuffetTable().getBuffetTableName());
+                        reservationView.setPrice(modelMapper.map(reservation.getTableHistory().getPrice(), PriceView.class));
+                        return reservationView;
+                    })
+                    .collect(Collectors.toList());
+        }else {
+            reservationViews = reservationRepository.findAllByCustomer_CustomerIdAndDate(customer.getCustomerId(),date)
+                    .stream().map(reservation -> {
+                        ReservationView reservationView = modelMapper.map(reservation,ReservationView.class);
+                        reservationView.setTableName(reservation.getTableHistory().getBuffetTable().getBuffetTableName());
+                        reservationView.setPrice(modelMapper.map(reservation.getTableHistory().getPrice(), PriceView.class));
+                        return reservationView;
+                    })
+                    .collect(Collectors.toList());
+        }
+        return ResponseEntity.ok(reservationViews);
+    }
+
+    public ResponseEntity<?> getReservationDetail(Integer id) {
+        Reservation reservation = reservationRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Not found"));
+        ReservationView reservationView = modelMapper.map(reservation,ReservationView.class);
+        reservationView.setTableName(reservation.getTableHistory().getBuffetTable().getBuffetTableName());
+        reservationView.setPrice(modelMapper.map(reservation.getTableHistory().getPrice(), PriceView.class));
+        return ResponseEntity.ok(reservationView);
+    }
+
+    public ResponseEntity<?> getReservationCheckIn(String phone, LocalDate date) {
+        List<Reservation> reservationList;
+        List<ReservationView> reservationViews;
+        if(phone.isBlank()) {
+            // all
+            reservationList = reservationRepository.findAllByDate(date);
+            reservationViews = reservationList.stream().map(reservation -> {
+                        ReservationView reservationView = modelMapper.map(reservation,ReservationView.class);
+                        reservationView.setTableName(reservation.getTableHistory().getBuffetTable().getBuffetTableName());
+                        reservationView.setPrice(modelMapper.map(reservation.getTableHistory().getPrice(), PriceView.class));
+                        return reservationView;
+                    })
+                    .collect(Collectors.toList());
+        }else {
+            Customer customer = customerRepository.findCustomerByPhone(phone);
+            reservationList = reservationRepository.findAllByCustomer_CustomerIdAndDate(customer.getCustomerId(),date);
+            reservationViews = reservationList.stream().map(reservation -> {
+                        ReservationView reservationView = modelMapper.map(reservation,ReservationView.class);
+                        reservationView.setTableName(reservation.getTableHistory().getBuffetTable().getBuffetTableName());
+                        reservationView.setPrice(modelMapper.map(reservation.getTableHistory().getPrice(), PriceView.class));
+                        return reservationView;
+                    })
+                    .collect(Collectors.toList());
+        }
         return ResponseEntity.ok(reservationViews);
     }
 }

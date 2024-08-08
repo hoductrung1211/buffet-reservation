@@ -16,7 +16,22 @@ public interface IPriceMenuItemRepository extends JpaRepository<PriceMenuItem,In
     boolean existsByApplicationDateAndMenuItem_MenuItemId(LocalDate date,Integer menuId);
 
     @Query("SELECT p FROM PriceMenuItem p WHERE p.applicationDate = " +
-            "(SELECT MAX(p2.applicationDate) FROM PriceMenuItem p2 WHERE p2.menuItem = p.menuItem AND p2.applicationDate <= :date)")
+            "(SELECT MAX(p2.applicationDate) " +
+            "FROM PriceMenuItem p2 " +
+            "WHERE p2.menuItem.menuItemId = p.menuItem.menuItemId " +
+            "AND p2.applicationDate <= :date )")
     List<PriceMenuItem> findCurrentPricesByMenuItemOnDate(@Param("date") LocalDate date);
+
+    @Query("SELECT p FROM PriceMenuItem p " +
+            "WHERE p.menuItem.menuItemId = :menuItemId " +
+            "AND p.applicationDate = (" +
+            "  SELECT MAX(p2.applicationDate) " +
+            "  FROM PriceMenuItem p2 " +
+            "  WHERE p2.menuItem.menuItemId = :menuItemId " +
+            "  AND p2.applicationDate <= :date" +
+            ")")
+    PriceMenuItem findCurPriceByMenuItemOnDate(@Param("date") LocalDate date,@Param("menuItemId") Integer id);
+
+
 
 }

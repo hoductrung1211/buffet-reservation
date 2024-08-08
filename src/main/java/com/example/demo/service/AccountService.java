@@ -54,7 +54,7 @@ public class AccountService {
         try {
             account = accountRepository.save(account);
             accountRepository.flush();
-            Customer customer = new Customer(userCreate.getFullName(),userCreate.getUsername(),account);
+            Customer customer = new Customer(userCreate.getFullName(),userCreate.getUsername(),userCreate.getEmail(),account);
             customerRepository.save(customer);
         }catch (Exception e){
             return ResponseEntity.badRequest().body("Create account failed!");

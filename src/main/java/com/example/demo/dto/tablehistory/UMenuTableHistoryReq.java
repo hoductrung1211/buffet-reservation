@@ -10,11 +10,14 @@ import java.util.List;
 @Setter
 public class UMenuTableHistoryReq {
     private Integer tableHistoryId;
-    private List<Order> orderList;
-    @Getter
-    @Setter
-    public static class Order{
-        private Integer priceMenuItemId;
-        private Integer menuItemQuantity;
-    }
+    private Integer menuItemQuantity;
+    private Integer priceMenuItemId;
+    //    private List<Order> orderList;
+//    @Getter
+//    @Setter
+//    public static class Order{
+//
+//        private Integer priceMenuItemId;
+//        private Integer menuItemQuantity;
+//    }
 }

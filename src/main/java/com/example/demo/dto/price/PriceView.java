@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Setter
 public class PriceView {
     private int priceId;
-    private DayGroup dayGroup;
+    private DayGroupView dayGroup;
     private BigDecimal adultPrice;
     private BigDecimal childPrice;
     private LocalDate applicationDate;

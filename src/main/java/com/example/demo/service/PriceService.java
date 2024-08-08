@@ -51,7 +51,7 @@ public class PriceService {
         if(cuPriceMenuItemReq.getApplicationDate().isBefore(curDate)) {
             return ResponseEntity.badRequest().body("Error");
         }
-        MenuItem menuItem = menuItemRepository.findById(cuPriceMenuItemReq.getPriceMenuItemId()).get();
+        MenuItem menuItem = menuItemRepository.findById(cuPriceMenuItemReq.getMenuItemId()).get();
         if (cuPriceMenuItemReq.getApplicationDate().isEqual(curDate)){
             if(priceMenuItemRepository.existsByApplicationDateAndMenuItem_MenuItemId(curDate,menuItem.getMenuItemId()))
                 return ResponseEntity.badRequest().body("menu item has been set price in today, can't change price");
@@ -60,8 +60,8 @@ public class PriceService {
         }
         PriceMenuItem priceMenuItem = new PriceMenuItem(cuPriceMenuItemReq.getPrice(),cuPriceMenuItemReq.getApplicationDate(),menuItem);
         try {
-            priceMenuItemRepository.save(priceMenuItem);
-            return ResponseEntity.ok("Successfully!");
+            priceMenuItem = priceMenuItemRepository.save(priceMenuItem);
+            return ResponseEntity.ok(modelMapper.map(priceMenuItem, PriceMenuItemView.class));
         }catch (Exception e){
             return ResponseEntity.badRequest().body("Error");
         }
@@ -70,9 +70,9 @@ public class PriceService {
     public ResponseEntity<?> updatePriceMenuItem(CUPriceMenuItemReq cuPriceMenuItemReq) {
         LocalDate curDate = LocalDate.now();
         if(cuPriceMenuItemReq.getApplicationDate().isBefore(curDate)) {
-            return ResponseEntity.badRequest().body("Error");
+            return ResponseEntity.badRequest().body("Application Date must be >= now");
         }
-        MenuItem menuItem = menuItemRepository.findById(cuPriceMenuItemReq.getPriceMenuItemId()).get();
+        MenuItem menuItem = menuItemRepository.findById(cuPriceMenuItemReq.getMenuItemId()).get();
         if (cuPriceMenuItemReq.getApplicationDate().isEqual(curDate)
                 && tableHistoryMenuItemRepository.isHasTableOrderOnDate(menuItem.getMenuItemId(),curDate))
             return ResponseEntity.badRequest().body("Has table SERVING with this menu item, can't change price");
@@ -80,8 +80,8 @@ public class PriceService {
         priceMenuItem.setApplicationDate(cuPriceMenuItemReq.getApplicationDate());
         priceMenuItem.setPrice(cuPriceMenuItemReq.getPrice());
         try {
-            priceMenuItemRepository.save(priceMenuItem);
-            return ResponseEntity.ok("Successfully!");
+            priceMenuItem = priceMenuItemRepository.save(priceMenuItem);
+            return ResponseEntity.ok(modelMapper.map(priceMenuItem, PriceMenuItemView.class));
         }catch (Exception e){
             return ResponseEntity.badRequest().body("Error");
         }
@@ -201,11 +201,11 @@ public class PriceService {
     public Price getPriceTicketToDate(LocalDate date){
         Holiday holiday = holidayRepository.findByDateAndMonth(date.getDayOfMonth(),date.getMonthValue(),date.getYear());
         DayGroup dayGroup = null;
-        if(holiday == null)
-            dayGroup = dayGroupRepository.findByDayGroupNameAndActiveTrue(DayGroupName.HOLIDAY.name());
+        if(holiday != null)
+            dayGroup = dayGroupRepository.findByDayGroupNameAndTrue(DayGroupName.HOLIDAY);
         else if(date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY)
-            dayGroup = dayGroupRepository.findByDayGroupNameAndActiveTrue(DayGroupName.WEEKEND.name());
-        else dayGroup = dayGroupRepository.findByDayGroupNameAndActiveTrue(DayGroupName.WEEKDAY.name());
+            dayGroup = dayGroupRepository.findByDayGroupNameAndTrue(DayGroupName.WEEKEND);
+        else dayGroup = dayGroupRepository.findByDayGroupNameAndTrue(DayGroupName.WEEKDAY);
         Price price = priceRepository.findByDateGroupId(date,dayGroup.getDateGroupId());
         return price;
     }

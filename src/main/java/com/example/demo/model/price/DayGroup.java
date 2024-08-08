@@ -20,8 +20,8 @@ public class DayGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int dateGroupId;
 
-    @Column(nullable = false,unique = true)
-    private String dayGroupName;
+    @Enumerated(EnumType.STRING)
+    private DayGroupName dayGroupName;
 
     private boolean isActive = true;
 
@@ -29,7 +29,7 @@ public class DayGroup {
     @OneToMany(mappedBy = "dayGroup", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Price> prices = new ArrayList<>();
 
-    public DayGroup(int dateGroupId, String dayGroupName, boolean isActive) {
+    public DayGroup(int dateGroupId, DayGroupName DayGroupName, boolean isActive) {
         this.dateGroupId = dateGroupId;
         this.dayGroupName = dayGroupName;
         this.isActive = isActive;

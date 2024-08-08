@@ -1,6 +1,5 @@
 package com.example.demo.model.price;
 
-import com.example.demo.model.menu.MenuItemGroup;
 import lombok.Getter;
 
 @Getter

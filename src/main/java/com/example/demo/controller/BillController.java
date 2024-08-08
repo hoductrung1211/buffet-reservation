@@ -24,7 +24,7 @@ public class BillController {
     }
 
     @GetMapping("all-by-date")
-    public ResponseEntity<?> getAllByDate(@RequestParam(name = "date") LocalDate date){
+    public ResponseEntity<?> getAllByDate(@RequestParam(name = "date",required = false) LocalDate date){
         return billService.getAllByDate(date);
     }
 

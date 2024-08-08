@@ -4,6 +4,8 @@ import com.example.demo.model.menu.MenuItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface IMenuItemRepository extends JpaRepository<MenuItem, Integer> {
 }

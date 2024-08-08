@@ -69,11 +69,17 @@ public class BillService {
         Object object = contextHolderService.getObjectFromContext();
         List<BillView> billViews;
         if(object instanceof Customer){
-            billViews = billRepository.findAllByCreateDateOfCustomer(date,((Customer) object).getCustomerId())
+            if(date == null) billViews = billRepository.findAllByCreateDateOfCustomer(date,((Customer) object).getCustomerId())
+                    .stream().map(bill -> modelMapper.map(bill,BillView.class))
+                    .collect(Collectors.toList());
+            else billViews = billRepository.findAllByCustomer(((Customer) object).getCustomerId())
                     .stream().map(bill -> modelMapper.map(bill,BillView.class))
                     .collect(Collectors.toList());
         }else {
-            billViews = billRepository.findAllByCreateDate(date)
+            if(date == null)  billViews = billRepository.findAllByCreateDate(date)
+                    .stream().map(bill -> modelMapper.map(bill,BillView.class))
+                    .collect(Collectors.toList());
+            else billViews = billRepository.findAll()
                     .stream().map(bill -> modelMapper.map(bill,BillView.class))
                     .collect(Collectors.toList());
         }

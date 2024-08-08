@@ -4,14 +4,11 @@ import com.example.demo.model.auth.Account;
 import com.example.demo.model.auth.Customer;
 import com.example.demo.model.auth.Employee;
 import com.example.demo.model.auth.Role;
-import com.example.demo.model.bill.TableHistory;
-import com.example.demo.model.bill.TableHistoryStatus;
 import com.example.demo.model.menu.MenuItem;
 import com.example.demo.model.menu.MenuItemCategory;
 import com.example.demo.model.menu.MenuItemGroup;
 import com.example.demo.model.price.DayGroup;
-import com.example.demo.model.reservation.Reservation;
-import com.example.demo.model.reservation.ReservationStatus;
+import com.example.demo.model.price.DayGroupName;
 import com.example.demo.model.reservation.ReservationTimeFrame;
 import com.example.demo.model.table.BuffetTable;
 import com.example.demo.model.table.TableGroup;
@@ -23,7 +20,6 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
@@ -128,26 +124,26 @@ public class SeedDataService implements ApplicationRunner {
         accountRepository.saveAll(accounts);
 
         List<Customer> customers = Arrays.asList(
-                new Customer(1, "Nguyễn Văn Anh", true, DateUtil.parseDate("1990-05-15"), "123 Đường 3/2, Quận 10, TP. Hồ Chí Minh", "0901234567", "nguyen.vananh@example.com", accounts.get(0)),
-                new Customer(2, "Trần Thị Mai", false, DateUtil.parseDate("1988-08-20"), "456 Nguyễn Thị Minh Khai, Quận 1, TP. Hồ Chí Minh", "0987654321", "tran.thimai@example.com", accounts.get(1)),
-                new Customer(3, "Phạm Thị Cúc", true, DateUtil.parseDate("1995-02-10"), "789 Lê Lợi, Quận 3, TP. Hồ Chí Minh", "0912345678", "pham.thicuc@example.com", accounts.get(2)),
-                new Customer(4, "Nguyễn Văn Đức", false, DateUtil.parseDate("1992-11-25"), "321 Cao Lỗ, Quận 8, TP. Hồ Chí Minh", "0908765432", "nguyen.vanduc@example.com", accounts.get(3)),
-                new Customer(5, "Lê Thị Lan", true, DateUtil.parseDate("1987-07-03"), "567 Nguyễn Công Trứ, Quận 5, TP. Hồ Chí Minh", "0976543210", "le.thilan@example.com", accounts.get(4)),
-                new Customer(6, "Trần Văn Phúc", false, DateUtil.parseDate("1998-04-15"), "432 Lê Văn Sỹ, Quận Tân Bình, TP. Hồ Chí Minh", "0918765433", "tran.vanphuc@example.com", accounts.get(5)),
-                new Customer(7, "Nguyễn Thị Giang", true, DateUtil.parseDate("1991-12-30"), "876 Nguyễn Văn Cừ, Quận 10, TP. Hồ Chí Minh", "0987654322", "nguyen.thigiang@example.com", accounts.get(6)),
-                new Customer(8, "Phạm Văn Khoa", false, DateUtil.parseDate("1989-09-20"), "234 Nguyễn Thị Diệu, Quận 3, TP. Hồ Chí Minh", "0909876544", "pham.vankhoa@example.com", accounts.get(7)),
-                new Customer(9, "Trần Thị Kiều", true, DateUtil.parseDate("1996-06-05"), "678 Nguyễn Văn Trỗi, Quận Phú Nhuận, TP. Hồ Chí Minh", "0912345679", "tran.thikieu@example.com", accounts.get(8)),
-                new Customer(10, "Nguyễn Văn Lâm", false, DateUtil.parseDate("1993-03-18"), "987 Nguyễn Đình Chiểu, Quận 3, TP. Hồ Chí Minh", "0987654323", "nguyen.vanlam@example.com", accounts.get(9)),
-                new Customer(11, "Lê Thị Hồng", true, DateUtil.parseDate("1994-08-28"), "543 Lê Hồng Phong, Quận 10, TP. Hồ Chí Minh", "0901234568", "le.thihong@example.com", accounts.get(10)),
-                new Customer(12, "Phạm Văn Minh", false, DateUtil.parseDate("1986-05-12"), "321 Nguyễn Hữu Cầu, Quận 1, TP. Hồ Chí Minh", "0976543211", "pham.vanminh@example.com", accounts.get(11)),
-                new Customer(13, "Nguyễn Thị Quyên", true, DateUtil.parseDate("1997-02-25"), "876 Lý Tự Trọng, Quận 3, TP. Hồ Chí Minh", "0912345680", "nguyen.thiquyen@example.com", accounts.get(12)),
-                new Customer(14, "Trần Văn Quang", false, DateUtil.parseDate("1990-11-10"), "456 Nguyễn Thị Định, Quận 7, TP. Hồ Chí Minh", "0909876545", "tran.vanquang@example.com", accounts.get(13)),
-                new Customer(15, "Nguyễn Thị Phương", true, DateUtil.parseDate("1988-07-20"), "234 Nguyễn Văn Bảo, Quận Bình Thạnh, TP. Hồ Chí Minh", "0987654324", "nguyen.thiphuong@example.com", accounts.get(14)),
-                new Customer(16, "Lê Văn Quyền", false, DateUtil.parseDate("1995-04-15"), "678 Lê Văn Lương, Quận 7, TP. Hồ Chí Minh", "0912345681", "le.vanquyen@example.com", accounts.get(15)),
-                new Customer(17, "Phạm Thị Rêu", true, DateUtil.parseDate("1992-12-30"), "987 Nguyễn Thị Minh Khai, Quận 3, TP. Hồ Chí Minh", "0901234569", "pham.thire@example.com", accounts.get(16)),
-                new Customer(18, "Nguyễn Văn Sơn", false, DateUtil.parseDate("1991-09-20"), "543 Cao Lỗ, Quận Tân Phú, TP. Hồ Chí Minh", "0976543212", "nguyen.vanson@example.com", accounts.get(17)),
-                new Customer(19, "Trần Thị Trâm", true, DateUtil.parseDate("1998-06-05"), "876 Nguyễn Thị Thập, Quận 11, TP. Hồ Chí Minh", "0912345682", "tran.thitram@example.com", accounts.get(18)),
-                new Customer(20, "Nguyễn Văn Tuấn", false, DateUtil.parseDate("1987-03-18"), "321 Nguyễn Văn Nghi, Quận Gò Vấp, TP. Hồ Chí Minh", "0987654325", "nguyen.vantuan@example.com", accounts.get(19))
+                new Customer(1, "Nguyễn Văn Anh", true, LocalDate.parse("1990-05-15"), "123 Đường 3/2, Quận 10, TP. Hồ Chí Minh", "0901234567", "nguyen.vananh@example.com", accounts.get(0)),
+                new Customer(2, "Trần Thị Mai", false, LocalDate.parse("1988-08-20"), "456 Nguyễn Thị Minh Khai, Quận 1, TP. Hồ Chí Minh", "0987654321", "tran.thimai@example.com", accounts.get(1)),
+                new Customer(3, "Phạm Thị Cúc", true, LocalDate.parse("1995-02-10"), "789 Lê Lợi, Quận 3, TP. Hồ Chí Minh", "0912345678", "pham.thicuc@example.com", accounts.get(2)),
+                new Customer(4, "Nguyễn Văn Đức", false, LocalDate.parse("1992-11-25"), "321 Cao Lỗ, Quận 8, TP. Hồ Chí Minh", "0908765432", "nguyen.vanduc@example.com", accounts.get(3)),
+                new Customer(5, "Lê Thị Lan", true, LocalDate.parse("1987-07-03"), "567 Nguyễn Công Trứ, Quận 5, TP. Hồ Chí Minh", "0976543210", "le.thilan@example.com", accounts.get(4)),
+                new Customer(6, "Trần Văn Phúc", false, LocalDate.parse("1998-04-15"), "432 Lê Văn Sỹ, Quận Tân Bình, TP. Hồ Chí Minh", "0918765433", "tran.vanphuc@example.com", accounts.get(5)),
+                new Customer(7, "Nguyễn Thị Giang", true, LocalDate.parse("1991-12-30"), "876 Nguyễn Văn Cừ, Quận 10, TP. Hồ Chí Minh", "0987654322", "nguyen.thigiang@example.com", accounts.get(6)),
+                new Customer(8, "Phạm Văn Khoa", false, LocalDate.parse("1989-09-20"), "234 Nguyễn Thị Diệu, Quận 3, TP. Hồ Chí Minh", "0909876544", "pham.vankhoa@example.com", accounts.get(7)),
+                new Customer(9, "Trần Thị Kiều", true, LocalDate.parse("1996-06-05"), "678 Nguyễn Văn Trỗi, Quận Phú Nhuận, TP. Hồ Chí Minh", "0912345679", "tran.thikieu@example.com", accounts.get(8)),
+                new Customer(10, "Nguyễn Văn Lâm", false, LocalDate.parse("1993-03-18"), "987 Nguyễn Đình Chiểu, Quận 3, TP. Hồ Chí Minh", "0987654323", "nguyen.vanlam@example.com", accounts.get(9)),
+                new Customer(11, "Lê Thị Hồng", true, LocalDate.parse("1994-08-28"), "543 Lê Hồng Phong, Quận 10, TP. Hồ Chí Minh", "0901234568", "le.thihong@example.com", accounts.get(10)),
+                new Customer(12, "Phạm Văn Minh", false, LocalDate.parse("1986-05-12"), "321 Nguyễn Hữu Cầu, Quận 1, TP. Hồ Chí Minh", "0976543211", "pham.vanminh@example.com", accounts.get(11)),
+                new Customer(13, "Nguyễn Thị Quyên", true, LocalDate.parse("1997-02-25"), "876 Lý Tự Trọng, Quận 3, TP. Hồ Chí Minh", "0912345680", "nguyen.thiquyen@example.com", accounts.get(12)),
+                new Customer(14, "Trần Văn Quang", false, LocalDate.parse("1990-11-10"), "456 Nguyễn Thị Định, Quận 7, TP. Hồ Chí Minh", "0909876545", "tran.vanquang@example.com", accounts.get(13)),
+                new Customer(15, "Nguyễn Thị Phương", true, LocalDate.parse("1988-07-20"), "234 Nguyễn Văn Bảo, Quận Bình Thạnh, TP. Hồ Chí Minh", "0987654324", "nguyen.thiphuong@example.com", accounts.get(14)),
+                new Customer(16, "Lê Văn Quyền", false, LocalDate.parse("1995-04-15"), "678 Lê Văn Lương, Quận 7, TP. Hồ Chí Minh", "0912345681", "le.vanquyen@example.com", accounts.get(15)),
+                new Customer(17, "Phạm Thị Rêu", true, LocalDate.parse("1992-12-30"), "987 Nguyễn Thị Minh Khai, Quận 3, TP. Hồ Chí Minh", "0901234569", "pham.thire@example.com", accounts.get(16)),
+                new Customer(18, "Nguyễn Văn Sơn", false, LocalDate.parse("1991-09-20"), "543 Cao Lỗ, Quận Tân Phú, TP. Hồ Chí Minh", "0976543212", "nguyen.vanson@example.com", accounts.get(17)),
+                new Customer(19, "Trần Thị Trâm", true, LocalDate.parse("1998-06-05"), "876 Nguyễn Thị Thập, Quận 11, TP. Hồ Chí Minh", "0912345682", "tran.thitram@example.com", accounts.get(18)),
+                new Customer(20, "Nguyễn Văn Tuấn", false, LocalDate.parse("1987-03-18"), "321 Nguyễn Văn Nghi, Quận Gò Vấp, TP. Hồ Chí Minh", "0987654325", "nguyen.vantuan@example.com", accounts.get(19))
         );
 
         customerRepository.saveAll(customers);
@@ -174,16 +170,16 @@ public class SeedDataService implements ApplicationRunner {
         accountRepository.saveAll(accounts);
 
         List<Employee> employees = Arrays.asList(
-                new Employee(1, "Nguyễn Quang Huy", true, DateUtil.parseDate("1990-01-01"), "012345678", "123 Đường Láng, Hà Nội", "0909123456", "nguyenquanghuy@example.com", accounts.get(0)),
-                new Employee(2, "Trần Thị Lan", false, DateUtil.parseDate("1988-02-02"), "876543210", "456 Đường Nguyễn Trãi, Hồ Chí Minh", "0912345678", "tranthilan@example.com", accounts.get(1)),
-                new Employee(3, "Lê Thanh Bình", true, DateUtil.parseDate("1992-03-03"), "234567890", "789 Đường Lê Duẩn, Đà Nẵng", "0923456789", "lethanhbinh@example.com", accounts.get(2)),
-                new Employee(4, "Phạm Minh Tuấn", true, DateUtil.parseDate("1985-04-04"), "345678901", "012 Đường Điện Biên Phủ, Hải Phòng", "0934567890", "phaminhtuan@example.com", accounts.get(3)),
-                new Employee(5, "Hoàng Ngọc Anh", false, DateUtil.parseDate("1993-05-05"), "456789012", "345 Đường Cách Mạng Tháng 8, Cần Thơ", "0945678901", "hoangngocanh@example.com", accounts.get(4)),
-                new Employee(6, "Đỗ Hải Yến", false, DateUtil.parseDate("1987-06-06"), "567890123", "678 Đường Trần Phú, Nha Trang", "0956789012", "dohaisyen@example.com", accounts.get(5)),
-                new Employee(7, "Vũ Đức Thắng", true, DateUtil.parseDate("1994-07-07"), "678901234", "901 Đường Hùng Vương, Huế", "0967890123", "vuducthang@example.com", accounts.get(6)),
-                new Employee(8, "Ngô Phương Mai", false, DateUtil.parseDate("1989-08-08"), "789012345", "234 Đường Lê Lợi, Vũng Tàu", "0978901234", "ngophuongmai@example.com", accounts.get(7)),
-                new Employee(9, "Bùi Gia Bảo", true, DateUtil.parseDate("1991-09-09"), "890123456", "567 Đường Phạm Văn Đồng, Biên Hòa", "0989012345", "buigiabao@example.com", accounts.get(8)),
-                new Employee(10, "Phan Khánh Linh", false, DateUtil.parseDate("1986-10-10"), "901234567", "890 Đường Nguyễn Huệ, Buôn Ma Thuột", "0990123456", "phankhanhlinh@example.com", accounts.get(9))
+                new Employee(1, "Nguyễn Quang Huy", true, LocalDate.parse("1990-01-01"), "012345678", "123 Đường Láng, Hà Nội", "0909123456", "nguyenquanghuy@example.com", accounts.get(0)),
+                new Employee(2, "Trần Thị Lan", false, LocalDate.parse("1988-02-02"), "876543210", "456 Đường Nguyễn Trãi, Hồ Chí Minh", "0912345678", "tranthilan@example.com", accounts.get(1)),
+                new Employee(3, "Lê Thanh Bình", true, LocalDate.parse("1992-03-03"), "234567890", "789 Đường Lê Duẩn, Đà Nẵng", "0923456789", "lethanhbinh@example.com", accounts.get(2)),
+                new Employee(4, "Phạm Minh Tuấn", true, LocalDate.parse("1985-04-04"), "345678901", "012 Đường Điện Biên Phủ, Hải Phòng", "0934567890", "phaminhtuan@example.com", accounts.get(3)),
+                new Employee(5, "Hoàng Ngọc Anh", false, LocalDate.parse("1993-05-05"), "456789012", "345 Đường Cách Mạng Tháng 8, Cần Thơ", "0945678901", "hoangngocanh@example.com", accounts.get(4)),
+                new Employee(6, "Đỗ Hải Yến", false, LocalDate.parse("1987-06-06"), "567890123", "678 Đường Trần Phú, Nha Trang", "0956789012", "dohaisyen@example.com", accounts.get(5)),
+                new Employee(7, "Vũ Đức Thắng", true, LocalDate.parse("1994-07-07"), "678901234", "901 Đường Hùng Vương, Huế", "0967890123", "vuducthang@example.com", accounts.get(6)),
+                new Employee(8, "Ngô Phương Mai", false, LocalDate.parse("1989-08-08"), "789012345", "234 Đường Lê Lợi, Vũng Tàu", "0978901234", "ngophuongmai@example.com", accounts.get(7)),
+                new Employee(9, "Bùi Gia Bảo", true, LocalDate.parse("1991-09-09"), "890123456", "567 Đường Phạm Văn Đồng, Biên Hòa", "0989012345", "buigiabao@example.com", accounts.get(8)),
+                new Employee(10, "Phan Khánh Linh", false, LocalDate.parse("1986-10-10"), "901234567", "890 Đường Nguyễn Huệ, Buôn Ma Thuột", "0990123456", "phankhanhlinh@example.com", accounts.get(9))
         );
 
         employeeRepository.saveAll(employees);
@@ -265,9 +261,9 @@ public class SeedDataService implements ApplicationRunner {
     /* 3. Price */
     public void seedPrices() {
         var dayGroups = Arrays.asList(
-                new DayGroup(1, "Ngày thường", true),
-                new DayGroup(2, "Ngày cuối tuần", true),
-                new DayGroup(3, "Ngày lễ", true)
+                new DayGroup(1, DayGroupName.WEEKDAY, true),
+                new DayGroup(2, DayGroupName.WEEKEND, true),
+                new DayGroup(3, DayGroupName.HOLIDAY, true)
         );
 
         if (dayGroupRepository.count() == 0) {

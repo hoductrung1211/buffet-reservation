@@ -29,8 +29,7 @@ public class MenuItem {
     @JoinColumn(name = "menu_item_category_id")
     private MenuItemCategory menuItemCategory;
 
-    @Convert(converter = MenuItemGroupConverter.class)
-    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private MenuItemGroup menuItemGroup;
 
     private String description;

@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface IDayGroupRepository extends JpaRepository<DayGroup, Integer> {
     @Query("SELECT dg FROM DayGroup dg WHERE dg.dayGroupName = :name AND dg.isActive is true ")
-    DayGroup findByDayGroupNameAndActiveTrue(@Param("name") String name);
+    DayGroup findByDayGroupNameAndTrue(@Param("name") DayGroupName name);
 }

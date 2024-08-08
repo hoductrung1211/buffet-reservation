@@ -7,7 +7,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,7 +29,8 @@ public class Customer {
 
     private boolean gender;
 
-    private Date dateOfBirth;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate dateOfBirth;
 
     private String address;
 
@@ -41,7 +44,7 @@ public class Customer {
     @JoinColumn(name = "accountId")
     private Account account;
 
-    public Customer(int customerId, String fullName, boolean gender, Date dateOfBirth, String address, String phone, String email, Account account) {
+    public Customer(int customerId, String fullName, boolean gender, LocalDate dateOfBirth, String address, String phone, String email, Account account) {
         this.customerId = customerId;
         this.fullName = fullName;
         this.gender = gender;
@@ -55,6 +58,13 @@ public class Customer {
     public Customer(String fullName, String phone, Account account) {
         this.fullName = fullName;
         this.phone = phone;
+        this.account = account;
+    }
+
+    public Customer(String fullName, String phone, String email, Account account) {
+        this.fullName = fullName;
+        this.phone = phone;
+        this.email = email;
         this.account = account;
     }
 

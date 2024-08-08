@@ -2,13 +2,16 @@ package com.example.demo.service;
 
 import com.example.demo.dto.menuitem.CUMenuItemReq;
 import com.example.demo.dto.menuitem.MenuItemSortView;
+import com.example.demo.dto.price.PriceMenuItemView;
 import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.model.bill.TableHistoryMenuItem;
+import com.example.demo.model.auth.Customer;
 import com.example.demo.model.menu.MenuItem;
 import com.example.demo.model.menu.MenuItemCategory;
 import com.example.demo.model.menu.MenuItemGroup;
+import com.example.demo.model.menu.PriceMenuItem;
 import com.example.demo.repository.IMenuItemCategoryRepository;
 import com.example.demo.repository.IMenuItemRepository;
+import com.example.demo.repository.IPriceMenuItemRepository;
 import com.example.demo.repository.ITableHistoryMenuItemRepository;
 import com.google.cloud.storage.Bucket;
 import com.google.firebase.cloud.StorageClient;
@@ -24,7 +27,11 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +41,7 @@ public class MenuItemService {
     private final IMenuItemCategoryRepository menuItemCategoryRepository;
     private final ModelMapper modelMapper;
     private final ITableHistoryMenuItemRepository tableHistoryMenuItemRepository;
-
+    private final IPriceMenuItemRepository priceMenuItemRepository;
     public String getImageUrl(String name) {
         return "https://storage.googleapis.com/buffet-b2b27.appspot.com/".concat(name);
     }
@@ -97,7 +104,7 @@ public class MenuItemService {
             String fileName = save(image);
             String urlImage = getImageUrl(fileName);
             MenuItemCategory menuItemCategory = menuItemCategoryRepository.findById(cuMenuItemReq.getMenuItemCategoryId()).get();
-            MenuItem menuItem = new MenuItem(cuMenuItemReq.getMenuItemName(),menuItemCategory, MenuItemGroup.getFromValue(cuMenuItemReq.getMenuItemGroup()),
+            MenuItem menuItem = new MenuItem(cuMenuItemReq.getMenuItemName(),menuItemCategory, MenuItemGroup.valueOf(cuMenuItemReq.getMenuItemGroup()),
                     cuMenuItemReq.getDescription(),urlImage,false);
             menuItem = menuItemRepository.save(menuItem);
             return ResponseEntity.ok(modelMapper.map(menuItem, MenuItemSortView.class));
@@ -114,7 +121,7 @@ public class MenuItemService {
                     .orElseThrow(() -> new ResourceNotFoundException("Not found menu item"));
             MenuItemCategory menuItemCategory = menuItemCategoryRepository.findById(cuMenuItemReq.getMenuItemCategoryId()).get();
             menuItem.setMenuItemName(cuMenuItemReq.getMenuItemName());
-            menuItem.setMenuItemGroup(MenuItemGroup.getFromValue(cuMenuItemReq.getMenuItemGroup()));
+            menuItem.setMenuItemGroup(MenuItemGroup.valueOf(cuMenuItemReq.getMenuItemGroup()));
             menuItem.setMenuItemCategory(menuItemCategory);
             menuItem.setDescription(cuMenuItemReq.getDescription());
             menuItem.setActive(cuMenuItemReq.isActive());
@@ -143,5 +150,44 @@ public class MenuItemService {
         }catch (Exception e){
             return ResponseEntity.badRequest().body("Error");
         }
+    }
+
+    public ResponseEntity<?> getAllNow() {
+        List<PriceMenuItemView> priceMenuItems = priceMenuItemRepository.findCurrentPricesByMenuItemOnDate(LocalDate.now())
+                    .stream().map(priceMenuItem -> modelMapper.map(priceMenuItem,PriceMenuItemView.class))
+                    .collect(Collectors.toList());
+        return ResponseEntity.ok(priceMenuItems);
+    }
+
+    public ResponseEntity<?> getMenuDetail(Integer id) {
+        MenuItem menuItem = menuItemRepository.findById(id).get();
+        LocalDate cur = LocalDate.now();
+        PriceMenuItemView priceMenuItemView = new PriceMenuItemView();
+        if(!menuItem.getPriceMenuItemList().isEmpty()){
+            PriceMenuItem priceMenuItem = priceMenuItemRepository.findCurPriceByMenuItemOnDate(cur,menuItem.getMenuItemId());
+            if(priceMenuItem != null){
+                priceMenuItemView = modelMapper.map(priceMenuItem, PriceMenuItemView.class);
+            }
+        }
+        priceMenuItemView.setMenuItem(modelMapper.map(menuItem,MenuItemSortView.class));
+        return ResponseEntity.ok(priceMenuItemView);
+    }
+
+    public ResponseEntity<?> getAllNow1() {
+        List<PriceMenuItemView> priceMenuItems = new ArrayList<>();
+        List<MenuItem> menuItems = menuItemRepository.findAll();
+        LocalDate cur = LocalDate.now();
+        for (MenuItem menuItem : menuItems){
+            PriceMenuItemView priceMenuItemView = new PriceMenuItemView();
+            if(!menuItem.getPriceMenuItemList().isEmpty()){
+                PriceMenuItem priceMenuItem = priceMenuItemRepository.findCurPriceByMenuItemOnDate(cur,menuItem.getMenuItemId());
+                if(priceMenuItem != null){
+                    priceMenuItemView = modelMapper.map(priceMenuItem, PriceMenuItemView.class);
+                }
+            }
+            priceMenuItemView.setMenuItem(modelMapper.map(menuItem,MenuItemSortView.class));
+            priceMenuItems.add(priceMenuItemView);
+        }
+        return ResponseEntity.ok(priceMenuItems);
     }
 }

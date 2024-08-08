@@ -23,6 +23,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,16 +84,25 @@ public class TableHistoryService {
         LocalDateTime time = LocalDateTime.now();
         TableHistory tableHistory = tableHistoryRepository.findById(cuTableHistoryReq.getTableHistoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("not found"));
-
+        if(!time.toLocalDate().isEqual(tableHistory.getReservation().getDate()))
+            return ResponseEntity.badRequest().body("Today is not the check in date on the ticket");
         if (tableHistory.getTableHistoryStatus().equals(TableHistoryStatus.FINISHED)
-            || tableHistory.getTableHistoryStatus().equals(TableHistoryStatus.CANCELED))
+                || tableHistory.getTableHistoryStatus().equals(TableHistoryStatus.CANCELED))
             return ResponseEntity.badRequest().body("FINISHED, CANCELED --> do not allow update");
+
+        if(tableHistory.getReservation() != null
+                && time.toLocalTime().isAfter(tableHistory.getReservation().getReservationTimeFrame().getEndTime())
+                && time.toLocalDate().isEqual(tableHistory.getReservation().getDate())
+        ) {
+            return ResponseEntity.badRequest().body("Tooooooooooo late!");
+        }
 
         Employee employee = (Employee) contextHolderService.getObjectFromContext();
         tableHistory.setEmployee(employee);
         tableHistory.setAdultsQuantity(cuTableHistoryReq.getAdultsQuantity());
         tableHistory.setChildrenQuantity(cuTableHistoryReq.getChildrenQuantity());
         tableHistory.setTableHistoryStatus(TableHistoryStatus.valueOf(cuTableHistoryReq.getStatus()));
+        tableHistory.setStartDateTime(time);
         try {
             tableHistory = tableHistoryRepository.save(tableHistory);
             return ResponseEntity.ok(modelMapper.map(tableHistory, TableHistoryView.class));
@@ -115,25 +126,33 @@ public class TableHistoryService {
         TableHistory tableHistory = tableHistoryRepository.findById(uMenuTableHistoryReq.getTableHistoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("not found"));
 
+        if(!LocalDate.now().isEqual(tableHistory.getReservation().getDate()))
+            return ResponseEntity.badRequest().body("Today is not the check in date on the ticket");
+
         if (tableHistory.getTableHistoryStatus().equals(TableHistoryStatus.FINISHED)
                 || tableHistory.getTableHistoryStatus().equals(TableHistoryStatus.CANCELED))
             return ResponseEntity.badRequest().body("FINISHED, CANCELED --> do not allow order");
 
-        List<TableHistoryMenuItem> orderList = new ArrayList<>();
-        for (UMenuTableHistoryReq.Order order : uMenuTableHistoryReq.getOrderList()){
-            PriceMenuItem priceMenuItem = priceMenuItemRepository.findById(order.getPriceMenuItemId())
-                    .orElseThrow(() -> new ResourceNotFoundException("not found priceMenuItem"));
-            TableHistoryMenuItem tableHistoryMenuItem = new TableHistoryMenuItem(tableHistory,priceMenuItem,order.getMenuItemQuantity());
-            orderList.add(tableHistoryMenuItem);
-        }
+//        List<TableHistoryMenuItem> orderList = new ArrayList<>();
+//        for (UMenuTableHistoryReq.Order order : uMenuTableHistoryReq.getOrderList()){
+//            PriceMenuItem priceMenuItem = priceMenuItemRepository.findById(order.getPriceMenuItemId())
+//                    .orElseThrow(() -> new ResourceNotFoundException("not found priceMenuItem"));
+//            TableHistoryMenuItem tableHistoryMenuItem = new TableHistoryMenuItem(tableHistory,priceMenuItem,order.getMenuItemQuantity());
+//            orderList.add(tableHistoryMenuItem);
+//        }
+        PriceMenuItem priceMenuItem = priceMenuItemRepository.findById(uMenuTableHistoryReq.getPriceMenuItemId())
+                .orElseThrow(() -> new ResourceNotFoundException("not found priceMenuItem"));
+        TableHistoryMenuItem tableHistoryMenuItem = new TableHistoryMenuItem(tableHistory,priceMenuItem,uMenuTableHistoryReq.getMenuItemQuantity());
         try {
-            orderList = tableHistoryMenuItemRepository.saveAll(orderList);
-            List<OrderView> orderViews = orderList
-                    .stream()
-                    .map(order -> modelMapper.map(order, OrderView.class))
-                    .collect(Collectors.toList()
-                    );
-            return ResponseEntity.ok(orderViews);
+            tableHistoryMenuItem = tableHistoryMenuItemRepository.save(tableHistoryMenuItem);
+//            orderList = tableHistoryMenuItemRepository.tableHistoryMenuItemRepository
+//            List<OrderView> orderViews = orderList
+//                    .stream()
+//                    .map(order -> modelMapper.map(order, OrderView.class))
+//                    .collect(Collectors.toList()
+//                    );
+//            return ResponseEntity.ok(orderViews);
+            return ResponseEntity.ok(modelMapper.map(tableHistoryMenuItem,OrderView.class));
         }catch (Exception e){
             return ResponseEntity.badRequest().body("order is failed");
         }
@@ -150,5 +169,37 @@ public class TableHistoryService {
         }catch (Exception e){
             return ResponseEntity.badRequest().body("delete is failed");
         }
+    }
+
+    public ResponseEntity<?> getDetail(Integer id) {
+        TableHistory tableHistory = tableHistoryRepository.findByReservation_ReservationId(id);
+        return ResponseEntity.ok(modelMapper.map(tableHistory, TableHistoryView.class));
+    }
+
+    public ResponseEntity<?> getOrders(Integer id) {
+        List<TableHistoryMenuItem> menuItemList = tableHistoryMenuItemRepository.findAllByTableHistory_TableHistoryId(id);
+        List<OrderView> orderViews = menuItemList
+                    .stream()
+                    .map(order -> modelMapper.map(order, OrderView.class))
+                    .collect(Collectors.toList()
+                    );
+        return ResponseEntity.ok(orderViews);
+    }
+
+    public ResponseEntity<?> getTotal(Integer id) {
+        List<TableHistoryMenuItem> menuItemList = tableHistoryMenuItemRepository.findAllByTableHistory_TableHistoryId(id);
+        BigDecimal total = BigDecimal.valueOf(0);
+        if(!menuItemList.isEmpty()){
+            TableHistory tableHistory = menuItemList.get(0).getTableHistory();
+            BigDecimal priceTicket = (tableHistory.getPrice().getAdultPrice().multiply(BigDecimal.valueOf(tableHistory.getAdultsQuantity())))
+                    .add(tableHistory.getPrice().getChildPrice().multiply(BigDecimal.valueOf(tableHistory.getChildrenQuantity())));
+
+            BigDecimal priceItem = BigDecimal.valueOf(0);
+            for(TableHistoryMenuItem menuItem : menuItemList){
+                priceItem = priceItem.add(menuItem.getPriceMenuItem().getPrice().multiply(BigDecimal.valueOf(menuItem.getMenuItemQuantity())));
+            }
+            total = priceTicket.add(priceItem);
+        }
+        return ResponseEntity.ok(total);
     }
 }

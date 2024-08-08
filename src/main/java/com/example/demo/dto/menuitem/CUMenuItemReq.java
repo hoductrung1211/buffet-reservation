@@ -16,7 +16,7 @@ public class CUMenuItemReq implements Serializable {
     private int menuItemId;
     private String menuItemName;
     private Integer menuItemCategoryId;
-    private Integer menuItemGroup;
+    private String menuItemGroup;
     private String description;
     private boolean isActive;
 

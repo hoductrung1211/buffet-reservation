@@ -45,7 +45,7 @@ public class TableHistory {
 
     private int childrenQuantity;
 
-    @Convert(converter = TableHistoryStatusConverter.class)
+    @Enumerated(EnumType.STRING)
     private TableHistoryStatus tableHistoryStatus;
 
     @OneToMany(mappedBy = "tableHistory", cascade = CascadeType.ALL, orphanRemoval = true)

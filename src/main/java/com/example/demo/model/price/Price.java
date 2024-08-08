@@ -22,7 +22,7 @@ public class Price {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int priceId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "day_group_id", nullable = false)
     private DayGroup dayGroup;
 

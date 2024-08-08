@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.dto.CreateDayGroupReq;
 import com.example.demo.dto.UpdateDayGroupReq;
 import com.example.demo.model.price.DayGroup;
+import com.example.demo.model.price.DayGroupName;
 import com.example.demo.repository.IDayGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -32,7 +33,7 @@ public class DayGroupService {
         return dayGroupRepository.save(
                 DayGroup
                         .builder()
-                        .dayGroupName(createDayGroup.getDayGroupName())
+                        .dayGroupName(DayGroupName.valueOf(createDayGroup.getDayGroupName()))
                         .build()
         );
     }
@@ -40,7 +41,7 @@ public class DayGroupService {
     public Optional<DayGroup> updateDayGroup(int dayGroupId, UpdateDayGroupReq updateDayGroup) {
         return Optional.ofNullable(dayGroupRepository.findById(dayGroupId)
                 .map(dayGroup -> {
-                    dayGroup.setDayGroupName(updateDayGroup.getDayGroupName());
+                    dayGroup.setDayGroupName(DayGroupName.valueOf(updateDayGroup.getDayGroupName()));
                     dayGroup.setActive(updateDayGroup.isActive());
 
                     return dayGroupRepository.save(dayGroup);

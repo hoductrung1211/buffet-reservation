@@ -1,7 +1,9 @@
 package com.example.demo.dto.tablehistory;
 
 import com.example.demo.converter.TableHistoryStatusConverter;
+import com.example.demo.dto.employee.EmployeeView;
 import com.example.demo.dto.price.PriceView;
+import com.example.demo.dto.reservation.ReservationView;
 import com.example.demo.model.auth.Employee;
 import com.example.demo.model.bill.TableHistoryStatus;
 import com.example.demo.model.reservation.Reservation;
@@ -25,6 +27,7 @@ public class TableHistoryView {
     private int adultsQuantity;
     private int childrenQuantity;
     private TableHistoryStatus tableHistoryStatus;
-    private Employee employee;
+    private EmployeeView employee;
     private PriceView price;
+    private ReservationView reservation;
 }

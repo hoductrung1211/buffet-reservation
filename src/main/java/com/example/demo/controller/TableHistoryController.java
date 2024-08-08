@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @RestController
 @RequestMapping("/api/table-histories")
 public class TableHistoryController {
@@ -17,12 +19,12 @@ public class TableHistoryController {
         this.tableHistoryService = tableHistoryService;
     }
 
-    @PostMapping("")
+    @PostMapping("create")
     public ResponseEntity<?> createTableHistory(@RequestBody CUTableHistoryReq tableHistory){
         return tableHistoryService.createTableHistory(tableHistory);
     }
 
-    @PutMapping("")
+    @PutMapping("update")
     public ResponseEntity<?> updateTableHistory(@RequestBody CUTableHistoryReq tableHistory){
         return tableHistoryService.updateTableHistory(tableHistory);
     }
@@ -37,4 +39,20 @@ public class TableHistoryController {
                                                       @RequestParam(name = "priceMenuItemId") Integer priceMenuItemId){
         return tableHistoryService.deleteMenuInTableHistory(tableHistoryId,priceMenuItemId);
     }
+
+    @GetMapping("detail")
+    public ResponseEntity<?> getDetail(@RequestParam(name = "id") Integer id){
+        return tableHistoryService.getDetail(id);
+    }
+
+    @GetMapping("order")
+    public ResponseEntity<?> getOrders(@RequestParam(name = "id") Integer id){
+        return tableHistoryService.getOrders(id);
+    }
+
+    @GetMapping("total")
+    public ResponseEntity<?> getTotal(@RequestParam(name = "id") Integer id){
+        return tableHistoryService.getTotal(id);
+    }
+
 }

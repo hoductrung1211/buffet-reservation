@@ -13,4 +13,5 @@ public interface IReservationRepository extends JpaRepository<Reservation, Integ
 
     List<Reservation> findAllByCustomer_CustomerId(int customerId);
     List<Reservation> findAllByCustomer_CustomerIdAndDate(int customerId, LocalDate date);
+    List<Reservation> findAllByDate(LocalDate date);
 }
